@@ -1,0 +1,345 @@
+-- Generate lookup table
+DROP TABLE IF EXISTS [dbo].[TEMP_VW_SURVEY];
+
+-- Creating the structure for temporary table
+CREATE TABLE [dbo].[TEMP_VW_SURVEY] (
+    HOLE NVARCHAR(16) PRIMARY KEY,
+    EASTING DECIMAL(9, 2), 
+    NORTHING DECIMAL(10, 2), 
+    UTM NCHAR(2),
+    SURVEY_ACCURACY NCHAR(1),
+    RL DECIMAL(7, 2),
+    END_DEPTH DECIMAL(8, 3),
+    DATEDRILL DATE,
+    FLAG NVARCHAR(50)
+);
+
+-- Create a temporary table to store the SITE_ID values to be selected
+CREATE TABLE [dbo].[#TempSiteIDs] (
+    SITE_ID VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AI
+);
+
+-- Create table variable
+DECLARE @SitesTable TABLE (
+    SITE_ID VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AI
+);
+
+-- Perform string split operation and insert the results into table variable
+INSERT INTO @SitesTable
+SELECT value 
+FROM STRING_SPLIT('?Select Sites?', ',');
+
+-- Get all site details only once and store them in another table variable
+DECLARE @SiteDetails TABLE (
+    SITE_ID VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AI,
+    EASTING FLOAT,
+    NORTHING FLOAT,
+    PROJECT VARCHAR(MAX)
+);
+
+INSERT INTO @SiteDetails
+SELECT 
+    SITE_ID, 
+    EASTING, 
+    NORTHING, 
+    PROJECT 
+FROM [dbo].[GB_CS_SITE_SURVEY]
+WHERE SITE_ID IN (SELECT SITE_ID FROM @SitesTable);
+
+-- Insert into #TempSiteIDs table by joining the actual survey data and the site details data  
+INSERT INTO [dbo].[#TempSiteIDs] (SITE_ID)
+SELECT s.SITE_ID
+FROM [dbo].[GB_CS_SITE_SURVEY] s
+JOIN @SiteDetails d ON s.PROJECT = d.PROJECT   
+WHERE
+    s.RANKING = 1
+    AND '?Select Project?' = s.PROJECT
+    AND SQRT(POWER(s.EASTING - d.EASTING, 2) + POWER(s.NORTHING - d.NORTHING, 2)) <= ?Select Radius (m)?;
+
+-- Use the #TempSiteIDs table in subsequent query to populate temporary table 
+INSERT INTO [dbo].[TEMP_VW_SURVEY]
+SELECT 
+    s.SITE_ID AS HOLE, 
+    s.EASTING AS EASTING, 
+    s.NORTHING AS NORTHING, 
+    s.UTM_ZONE AS UTM,
+    s.SURVEY_ACCURACY,
+    s.HEIGHT AS RL,
+    e.END_DEPTH,
+    e.COMPLETE_DATE AS DATEDRILL,
+    e.VALIDATION_GROUP AS FLAG
+FROM 
+    [dbo].[GB_CS_SITE_SURVEY] AS s
+JOIN 
+    [dbo].[GB_SITE] AS e ON s.SITE_ID = e.SITE_ID AND s.PROJECT = e.PROJECT
+WHERE
+    s.RANKING = 1
+    AND s.PROJECT = '?Select Project?'
+    AND (
+        e.DATE_INSERTED >= '?From Date?' 
+        AND e.DATE_INSERTED < DATEADD(day, 1, '?To Date?')
+    )
+    AND (('?Include blast holes only?' <> 'Yes') OR ('?Include blast holes only?' = 'Yes' AND LEFT(s.SITE_ID, 2) = 'PS'))
+    AND (
+        ('?Select Sites?' <> '' AND s.SITE_ID IN (SELECT SITE_ID FROM [dbo].[#TempSiteIDs]))
+        OR '?Select Sites?' = ''
+    );
+
+-- Table cleanup
+DROP TABLE [dbo].[#TempSiteIDs];
+
+--Export Survey Data
+SELECT  *
+FROM 
+    [dbo].[TEMP_VW_SURVEY]
+ORDER BY
+    HOLE;
+
+-- Export Lithology Data
+SELECT
+	HOLE,
+	DEPTH_FROM,
+	DEPTH_TO,
+	RECORD_SEQ_FLAG,
+	SAMPLE_ID,
+	SAMPLE_PURPOSE,
+	SEAM,
+	HORIZON,
+	WSECT,
+	THICKNESS,
+	ROCK,
+	LITHO_QUAL,
+	WEATHERING,
+	SHADE,
+	HUE,
+	COLOUR,
+	ADJECTIVE_1,
+	ADJECTIVE_2,
+	ADJECTIVE_3,
+	ADJECTIVE_4
+FROM
+(
+	SELECT
+		lh.SITE_ID AS HOLE,
+		lh.DEPTH_FROM,
+		lh.DEPTH_TO,
+		lh.RECORD_SEQ_FLAG,
+		s.SAMPLE_ID,
+		s.SAMPLE_PURPOSE,
+            CASE
+                WHEN lh.SEAM NOT IN ('BHQA', 'BHTE', 'BHW' ,'BHWE', 'TPBS', 'PE', 'WT', 'BHPE', 'BHSH') THEN lh.SEAM
+                ELSE NULL
+                END AS SEAM,
+            CASE
+                WHEN lh.SEAM IN ('BHQA', 'BHTE', 'BHW' ,'BHWE', 'TPBS', 'PE', 'WT', 'BHPE', 'BHSH') THEN lh.SEAM
+                ELSE NULL
+                END AS HORIZON,
+		IIF(lh.WSECT IS NOT NULL, lh.WSECT, lh.SEAM) AS WSECT,
+		(lh.DEPTH_TO - lh.DEPTH_FROM) AS THICKNESS,
+		lh.ROCK,
+		lh.GRAIN AS LITHO_QUAL,
+		lh.WEATH AS WEATHERING,
+		lh.SHADE,
+		lh.HUE,
+		lh.COLOUR,
+		lh.LITH1 AS ADJECTIVE_1,
+		lh.LITH2 AS ADJECTIVE_2,
+		lh.LITH3 AS ADJECTIVE_3,
+		NULL AS ADJECTIVE_4
+	FROM
+		[dbo].[GB_LITHOLOGY_HISTORIC] lh
+      LEFT JOIN (
+          SELECT *,
+              ROW_NUMBER() OVER (PARTITION BY SITE_ID, FROM_DEPTH, TO_DEPTH ORDER BY SAMPLE_ID) as rn
+          FROM [dbo].[GB_CS_SAMPLE]
+      ) s ON lh.SITE_ID = s.SITE_ID AND lh.PROJECT = s.PROJECT AND s.rn = 1 AND (
+              lh.DEPTH_FROM = s.FROM_DEPTH OR
+              lh.DEPTH_TO = s.TO_DEPTH OR
+              (lh.DEPTH_FROM > s.FROM_DEPTH AND lh.DEPTH_TO < s.TO_DEPTH)
+          )
+	WHERE
+		lh.PROJECT = '?Select Project?'
+		AND lh.RECORD_SEQ_FLAG = 1
+		AND EXISTS (SELECT 1 FROM [dbo].[TEMP_VW_SURVEY] WHERE HOLE = lh.SITE_ID)
+
+	UNION ALL
+
+	SELECT 
+		l.SITE_ID AS HOLE, 
+		l.FROM_DEPTH AS DEPTH_FROM,
+		l.TO_DEPTH AS DEPTH_TO,
+		l.RECORD_SEQ_FLAG,
+		s.SAMPLE_ID,
+		s.SAMPLE_PURPOSE,
+		l.SEAM,
+		l.HORIZON,
+		IIF(l.PLY IS NOT NULL, l.PLY, l.HORIZON) AS WSECT,
+		(l.TO_DEPTH - l.FROM_DEPTH) AS THICKNESS,
+		l.LITHO_TYPE AS ROCK,
+		l.LITHO_QUAL,
+		l.WEATHERING,
+		l.SHADE,
+		l.HUE,
+		l.COLOUR,
+		l.ADJECTIVE_1,
+		l.ADJECTIVE_2,
+		l.ADJECTIVE_3,
+		l.ADJECTIVE_4
+	FROM 
+		[dbo].[GB_CS_LITHOLOGY] l
+      LEFT JOIN (
+          SELECT *,
+              ROW_NUMBER() OVER (PARTITION BY SITE_ID, FROM_DEPTH, TO_DEPTH ORDER BY SAMPLE_ID) as rn
+          FROM [dbo].[GB_CS_SAMPLE]
+      ) s ON l.SITE_ID = s.SITE_ID AND l.PROJECT = s.PROJECT AND s.rn = 1 AND (
+              l.FROM_DEPTH = s.FROM_DEPTH OR
+              l.TO_DEPTH = s.TO_DEPTH OR
+              (l.FROM_DEPTH > s.FROM_DEPTH AND l.TO_DEPTH < s.TO_DEPTH)
+          )
+	WHERE 
+		l.PROJECT = '?Select Project?' 
+		AND l.RECORD_SEQ_FLAG = 1
+		AND EXISTS (SELECT 1 FROM [dbo].[TEMP_VW_SURVEY] WHERE HOLE = l.SITE_ID)
+) AS CombinedTable
+ORDER BY
+	HOLE,
+	DEPTH_FROM;
+
+-- Export DH Surey Data
+SELECT 
+    d.SITE_ID AS HOLE,
+    FLOOR(d.DEPTH / CAST(?Vert Grouping Interval? AS FLOAT)) * CAST(?Vert Grouping Interval? AS FLOAT) AS DEPTH,
+    AVG(CASE WHEN d.LOG_TYPE = 'AZIMUTH' THEN d.LOG_VAL ELSE NULL END) AS AZI,
+    AVG(CASE WHEN d.LOG_TYPE = 'INCLINATION' THEN d.LOG_VAL ELSE NULL END) AS TILT,
+    AVG(CASE WHEN d.LOG_TYPE = 'INCLINATION' THEN -90+d.LOG_VAL ELSE NULL END) AS DIP
+FROM 
+    GB_GEOPHYS_LAS_DATA d
+JOIN 
+    GB_SITE s ON d.SITE_ID = s.SITE_ID AND d.PROJECT = s.PROJECT
+WHERE 
+    d.PROJECT = '?Select Project?'
+    AND d.INSTANCE = 1
+    AND EXISTS (SELECT 1 FROM [dbo].[TEMP_VW_SURVEY] WHERE HOLE = d.SITE_ID)
+GROUP BY
+    d.SITE_ID,
+    FLOOR(d.DEPTH / CAST(?Vert Grouping Interval? AS FLOAT)) * CAST(?Vert Grouping Interval? AS FLOAT)
+HAVING
+    AVG(CASE WHEN d.LOG_TYPE = 'AZIMUTH' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'INCLINATION' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'INCLINATION' THEN -90+d.LOG_VAL ELSE NULL END) IS NOT NULL
+ORDER BY
+    HOLE,
+    DEPTH;
+
+-- Export DH Geophysics Data
+SELECT 
+    d.SITE_ID AS HOLE,
+    FLOOR(d.DEPTH / CAST(?DGPY Grouping Interval? AS FLOAT)) * CAST(?DGPY Grouping Interval? AS FLOAT) AS DEPTH,
+    AVG(CASE WHEN d.LOG_TYPE = 'CALIPER_MM' THEN d.LOG_VAL ELSE NULL END) AS CALLIMM,
+    AVG(CASE WHEN d.LOG_TYPE = 'GAMMA_API' THEN d.LOG_VAL ELSE NULL END) AS GAMAPI,
+    AVG(CASE WHEN d.LOG_TYPE = 'SHORT_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) AS DESSGB,
+    AVG(CASE WHEN d.LOG_TYPE = 'LONG_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) AS DELSGC,
+    AVG(CASE WHEN d.LOG_TYPE = 'RESISTIVITY_SHALLOW' THEN d.LOG_VAL ELSE NULL END) AS RESHOM,
+    AVG(CASE WHEN d.LOG_TYPE = 'RESISTIVITY_DEEP' THEN d.LOG_VAL ELSE NULL END) AS REDEOM,
+    AVG(CASE WHEN d.LOG_TYPE = 'SHORT_NEUTRON_SNU' THEN d.LOG_VAL ELSE NULL END) AS NESSSN,
+    AVG(CASE WHEN d.LOG_TYPE = 'SONIC_VELOCITY' THEN d.LOG_VAL ELSE NULL END) AS SONICV
+FROM 
+    GB_GEOPHYS_LAS_DATA d
+JOIN 
+    GB_SITE s ON d.SITE_ID = s.SITE_ID AND d.PROJECT = s.PROJECT
+WHERE 
+    d.PROJECT = '?Select Project?'
+    AND d.INSTANCE = 1
+    AND '?Include DH Geophys?' = 'Yes'
+    AND EXISTS (SELECT 1 FROM [dbo].[TEMP_VW_SURVEY] WHERE HOLE = d.SITE_ID)
+GROUP BY
+    d.SITE_ID,
+    FLOOR(d.DEPTH / CAST(?DGPY Grouping Interval? AS FLOAT)) * CAST(?DGPY Grouping Interval? AS FLOAT)
+HAVING
+    AVG(CASE WHEN d.LOG_TYPE = 'CALIPER_MM' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'GAMMA_API' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'SHORT_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'LONG_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'RESISTIVITY_SHALLOW' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'RESISTIVITY_DEEP' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'SHORT_NEUTRON_SNU' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'SONIC_velocity' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+ORDER BY
+    HOLE,
+    DEPTH;
+
+-- Export Point Load Data
+SELECT
+    SITE_ID AS HOLE,
+    FROM_DEPTH as DEPTH_FROM,
+    TO_DEPTH as DEPTH_TO,
+    (TO_DEPTH - FROM_DEPTH) SAMPLE_LENGTH,
+    SAMPLE_STATE,
+    SAMPLE_NO AS SAMPLE_ID,
+    TEST_ID,
+    PL_TEST_TYPE as TEST_TYPE,
+    PLATEN_SEP,
+    WIDTH,
+    FAILURE_LOAD,
+    FAILURE_MODE,
+    D_mm,
+    L_mm,
+    W_mm,
+    De_mm,
+    [IS],
+    IS_50,
+    COMMENTS
+FROM
+    [dbo].[GB_CS_POINT_LOAD] s
+WHERE
+    EXISTS (SELECT 1 FROM [dbo].[TEMP_VW_SURVEY] WHERE HOLE = s.SITE_ID)
+    AND s.PROJECT = '?Select Project?'
+    AND '?Include point loads?' = 'Yes'
+ORDER BY
+    HOLE,
+    DEPTH_FROM;
+
+-- Export PROX Data
+SELECT 
+    p.SITE_ID,
+    p.CLIENT_SAMPLE_ID,
+    p.DISPATCH_NO,
+    p.LAB_JOB_NO,
+    s.FROM_DEPTH,
+    s.TO_DEPTH,
+    p.FRACTION,
+    MAX(IIF(p.PARAM_NAME = 'MASS_KG', p.PARAM_VALUE, NULL)) AS MASS_KG,
+    MAX(IIF(p.PARAM_NAME = 'YLD', p.PARAM_VALUE, NULL)) AS YLD,
+    MAX(IIF(p.PARAM_NAME = 'RD_AD', p.PARAM_VALUE, NULL)) AS RD_AD,
+    MAX(IIF(p.PARAM_NAME = 'RD_CALC', p.PARAM_VALUE, NULL)) AS RD_CALC,
+    MAX(IIF(p.PARAM_NAME = 'RD_IS', p.PARAM_VALUE, NULL)) AS RD_IS,
+    MAX(IIF(p.PARAM_NAME = 'IM_AD', p.PARAM_VALUE, NULL)) AS IM_AD,
+    MAX(IIF(p.PARAM_NAME = 'ASH_AD', p.PARAM_VALUE, NULL)) AS ASH_AD,
+    MAX(IIF(p.PARAM_NAME = 'VM_AD', p.PARAM_VALUE, NULL)) AS VM_AD,
+    MAX(IIF(p.PARAM_NAME = 'FC_AD', p.PARAM_VALUE, NULL)) AS FC_AD,
+    MAX(IIF(p.PARAM_NAME = 'TS_AD', p.PARAM_VALUE, NULL)) AS TS_AD,
+    MAX(IIF(p.PARAM_NAME = 'PHOS', p.PARAM_VALUE, NULL)) AS PHOS,
+    MAX(IIF(p.PARAM_NAME = 'SE_AD', p.PARAM_VALUE, NULL)) AS SE_AD,
+    MAX(IIF(p.PARAM_NAME = 'SLAGIND', p.PARAM_VALUE, NULL)) AS SLAGIND,
+    MAX(IIF(p.PARAM_NAME = 'CSN', p.PARAM_VALUE, NULL)) AS CSN,
+    MAX(IIF(p.PARAM_NAME = 'DDPM', p.PARAM_VALUE, NULL)) AS DDPM,
+    p.DATE_INSERTED
+FROM [dbo].[GB_CS_ANALYSIS_RESULTS_PROX_RAW] p
+LEFT JOIN [dbo].[GB_CS_SAMPLE] s 
+ON s.PROJECT = '?Select Project?' AND s.SITE_ID = p.SITE_ID AND s.SAMPLE_ID = p.CLIENT_SAMPLE_ID
+WHERE EXISTS (SELECT 1 FROM [dbo].[TEMP_VW_SURVEY] WHERE HOLE = s.SITE_ID)
+  AND p.PROJECT = '?Select Project?'
+  AND '?Include PROX Raw?' = 'Yes'
+GROUP BY 
+    p.SITE_ID,
+    p.CLIENT_SAMPLE_ID,
+    p.DISPATCH_NO,
+    p.LAB_JOB_NO,
+    s.FROM_DEPTH,
+    s.TO_DEPTH,
+    p.FRACTION,
+    p.DATE_INSERTED
+ORDER BY SITE_ID, FROM_DEPTH;
+
+-- Data cleanup
+DROP TABLE IF EXISTS [dbo].[TEMP_VW_SURVEY];
