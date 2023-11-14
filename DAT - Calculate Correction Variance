@@ -1,4 +1,4 @@
--- Create a CTE (Common Table Expression) for GB_CS_LITHOLOGY table
+-- Create a CTE for GB_CS_LITHOLOGY table
 WITH CS AS (
     SELECT 
         CUSTOM_INT_TYPE,
