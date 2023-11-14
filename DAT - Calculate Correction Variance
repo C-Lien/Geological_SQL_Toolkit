@@ -1,0 +1,73 @@
+-- Create a CTE (Common Table Expression) for GB_CS_LITHOLOGY table
+WITH CS AS (
+    SELECT 
+        CUSTOM_INT_TYPE,
+        FROM_DEPTH AS DEPTH_FROM,
+        TO_DEPTH AS DEPTH_TO
+    FROM
+        dbo.GB_CS_LITHOLOGY L
+    WHERE
+        PROJECT = '?Please Select a project:?'
+        AND SITE_ID = '?Please Select a Site:?'
+        AND RECORD_SEQ_FLAG = 1
+        AND CUSTOM_INT_TYPE IS NOT NULL
+        AND (FROM_DEPTH - TO_DEPTH) <> 0
+),
+
+-- Create a CTE for GB_RAW_LITHOLOGY table
+RAW AS (
+    SELECT 
+        CUSTOM_INT_TYPE,
+        FROM_DEPTH AS RAW_DEPTH_FROM,
+        TO_DEPTH AS RAW_DEPTH_TO
+    FROM
+        dbo.GB_RAW_LITHOLOGY R
+    WHERE 
+        R.PROJECT = '?Please Select a project:?'
+        AND R.SITE_ID = '?Please Select a Site:?' 
+)
+
+-- Combine and perform calculations on both tables
+SELECT 
+    CS.CUSTOM_INT_TYPE,
+    CS.DEPTH_FROM,
+    CS.DEPTH_TO,
+    RAW.RAW_DEPTH_FROM,
+    RAW.RAW_DEPTH_TO,
+    -- Calculate the thickness variation between production and raw lithology
+    --((CS.DEPTH_TO - CS.DEPTH_FROM) / (RAW.RAW_DEPTH_TO - RAW.RAW_DEPTH_FROM)) * 100 AS THICK_VAR,
+    -- Determine thickness classification for visual purposes (patterns/ colours)
+    CASE
+        WHEN ((CS.DEPTH_TO - CS.DEPTH_FROM) / (RAW.RAW_DEPTH_TO - RAW.RAW_DEPTH_FROM)) * 100 > 100 THEN '>100'
+        WHEN ((CS.DEPTH_TO - CS.DEPTH_FROM) / (RAW.RAW_DEPTH_TO - RAW.RAW_DEPTH_FROM)) * 100 < 100 THEN '<100'
+        ELSE '=100'
+    END AS THICK_SYM,
+    -- Calculate thickness and truncate to two decimal places for concatenation for visual pleasure.
+    CONCAT(
+        SUBSTRING(
+            CAST(
+                FLOOR(
+                    (
+                        (CS.DEPTH_TO - CS.DEPTH_FROM) 
+                        / 
+                        (RAW.RAW_DEPTH_TO - RAW.RAW_DEPTH_FROM)
+                    ) * 10000
+                ) / 100.0 
+            AS VARCHAR), 
+        1, 
+        CHARINDEX(
+            '.', 
+            CAST(
+                FLOOR(
+                    (
+                        (CS.DEPTH_TO - CS.DEPTH_FROM) 
+                        / 
+                        (RAW.RAW_DEPTH_TO - RAW.RAW_DEPTH_FROM)
+                    ) * 10000
+                ) / 100.0 
+            AS VARCHAR)
+         ) + 2
+        ), 
+    '%') AS THICK_VAR_PERCENT
+FROM 
+    CS JOIN RAW ON CS.CUSTOM_INT_TYPE = RAW.CUSTOM_INT_TYPE;
