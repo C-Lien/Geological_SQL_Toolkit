@@ -1,0 +1,212 @@
+-- Generate Site Details
+WITH MaxDepth AS (
+    SELECT 
+        MAX(c.TO_DEPTH) AS MAX_CASING_DEPTH,
+        MAX(d.TO_DEPTH) AS MAX_DRILLING_DEPTH
+    FROM 
+        GB_CS_CASING c
+    JOIN
+        GB_CS_DRILLING d ON d.PROJECT = c.PROJECT AND d.SITE_ID = c.SITE_ID
+    WHERE 
+        c.PROJECT = '?Select Project?' AND c.SITE_ID = '?Select Site?'
+)
+SELECT 
+    s.PROJECT,
+    s.SITE_ID,
+    s.COMPLETE_DATE,
+    s.END_DEPTH,
+    sd.AREA_SITE_ID,
+    sd.LEASE_NO,
+    CAST(sd.SW_LEVEL AS NVARCHAR(8)) + ' m' AS SW_LEVEL,
+    CAST(md.MAX_CASING_DEPTH AS NVARCHAR(8)) + ' m' AS CASING_DEPTH,
+    CAST(CAST(md.MAX_DRILLING_DEPTH AS DECIMAL (5,2)) AS NVARCHAR(8)) + ' m' AS DRILLING_DEPTH,
+    CAST((CEILING(md.MAX_DRILLING_DEPTH - 12)) AS NVARCHAR(8)) + ' m' AS GROUTING_DEPTH,
+    ss.EASTING,
+    ss.NORTHING
+FROM 
+    GB_SITE s
+JOIN
+    GB_CS_SITE_DETAILS sd ON sd.PROJECT = s.PROJECT AND sd.SITE_ID = s.SITE_ID
+JOIN
+    GB_CS_SITE_SURVEY ss ON ss.PROJECT = s.PROJECT AND ss.SITE_ID = s.SITE_ID
+JOIN 
+    GB_CS_CASING c ON c.PROJECT = s.PROJECT AND c.SITE_ID = s.SITE_ID
+CROSS JOIN
+    MaxDepth md
+WHERE 
+    s.PROJECT = '?Select Project?' AND s.SITE_ID = '?Select Site?';
+
+-- Generate Casing Details
+SELECT 
+    s.PROJECT,
+    s.SITE_ID,
+    CASE WHEN LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH) IS NULL THEN 0 ELSE LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH) END AS FROM_DEPTH,
+    c.TO_DEPTH,
+    CASE WHEN LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH) IS NULL THEN c.TO_DEPTH ELSE c.TO_DEPTH - LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH) END AS LENGTH,
+    CASE 
+        WHEN c.IN_DIAMETER IS NOT NULL THEN c.IN_DIAMETER 
+        ELSE c.OUT_DIAMETER 
+    END AS CASING_DIAMETER,
+    c.CASING_MATERIAL,
+    c.CASING_NAME,
+    CAST(
+        (CASE 
+            WHEN LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH) IS NULL THEN 
+                (CASE 
+                    WHEN c.IN_DIAMETER IS NOT NULL THEN 
+                        (POWER((CAST(c.IN_DIAMETER AS DECIMAL(9,2)) / 2), 2) * PI() * c.TO_DEPTH) / 1000 
+                    ELSE 
+                        (POWER((CAST(c.OUT_DIAMETER AS DECIMAL(9,2)) / 2), 2) * PI() * c.TO_DEPTH) / 1000 
+                END)
+            ELSE 
+                (CASE 
+                    WHEN c.IN_DIAMETER IS NOT NULL THEN 
+                        (POWER((CAST(c.IN_DIAMETER AS DECIMAL(9,2)) / 2), 2) * PI() * (c.TO_DEPTH - LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH))) / 1000 
+                    ELSE 
+                        (POWER((CAST(c.OUT_DIAMETER AS DECIMAL(9,2)) / 2), 2) * PI() * (c.TO_DEPTH - LAG(c.TO_DEPTH) OVER (ORDER BY c.TO_DEPTH))) / 1000
+                END)
+        END) AS DECIMAL(9,2)
+    ) AS VOLUME
+INTO #TempCasingTable
+FROM 
+    GB_SITE s
+JOIN 
+    GB_CS_CASING c ON c.PROJECT = s.PROJECT AND c.SITE_ID = s.SITE_ID
+WHERE 
+    s.PROJECT = '?Select Project?' AND s.SITE_ID = '?Select Site?'  
+ORDER BY 
+    TO_DEPTH;
+
+SELECT NULL;
+
+-- Extract required Casing Details for display
+WITH OrderedCasing AS (
+    SELECT 
+        PROJECT,
+        SITE_ID,
+        0 AS FROM_DEPTH,
+        TO_DEPTH,
+        CASING_DIAMETER,
+        CASING_MATERIAL,
+        CASING_NAME,
+        VOLUME,
+        ROW_NUMBER() OVER (ORDER BY TO_DEPTH DESC) AS RowNum
+    FROM 
+        #TempCasingTable
+)
+SELECT * 
+FROM OrderedCasing 
+WHERE RowNum = 1;
+
+-- Generate Drilling Details
+WITH MaxCasingDepth AS (
+    SELECT 
+        MAX(c.TO_DEPTH) AS Max_TO_DEPTH
+    FROM 
+        GB_CS_CASING c
+    WHERE 
+        c.PROJECT = '?Select Project?' AND c.SITE_ID = '?Select Site?'
+)
+SELECT 
+    sub.PROJECT,
+    sub.SITE_ID,
+    sub.TO_DEPTH,
+    sub.HOLE_SIZE,
+    sub.BIT_TYPE
+INTO #TempDrillingSubTable
+FROM (
+    SELECT 
+        DISTINCT s.PROJECT,
+        s.SITE_ID,
+        d.TO_DEPTH,
+        CASE 
+            WHEN d.TO_DEPTH > mcd.Max_TO_DEPTH AND
+           (LEAD(d.HOLE_SIZE) OVER (ORDER BY d.TO_DEPTH) <> d.HOLE_SIZE OR 
+            LEAD(d.HOLE_SIZE) OVER (ORDER BY d.TO_DEPTH) IS NULL)
+            THEN d.HOLE_SIZE 
+            ELSE NULL 
+        END AS HOLE_SIZE,
+        CASE 
+            WHEN d.TO_DEPTH > mcd.Max_TO_DEPTH AND
+           (LEAD(d.BIT_TYPE) OVER (ORDER BY d.TO_DEPTH) <> d.BIT_TYPE OR 
+            LEAD(d.BIT_TYPE) OVER (ORDER BY d.TO_DEPTH) IS NULL)
+            THEN d.BIT_TYPE 
+            ELSE NULL
+        END AS BIT_TYPE
+    FROM 
+        GB_SITE s
+    JOIN
+        GB_CS_SITE_DETAILS sd ON sd.PROJECT = s.PROJECT AND sd.SITE_ID = s.SITE_ID
+    JOIN
+        GB_CS_SITE_SURVEY ss ON ss.PROJECT = s.PROJECT AND ss.SITE_ID = s.SITE_ID
+    JOIN 
+        GB_CS_DRILLING d ON d.PROJECT = s.PROJECT AND d.SITE_ID = s.SITE_ID,
+    MaxCasingDepth mcd
+    WHERE 
+        s.PROJECT = '?Select Project?' AND s.SITE_ID = '?Select Site?'
+        AND d.TO_DEPTH > mcd.Max_TO_DEPTH
+) AS sub
+WHERE 
+    sub.HOLE_SIZE IS NOT NULL;
+
+WITH MaxCasingDepth AS (
+    SELECT 
+        MAX(c.TO_DEPTH) AS Max_TO_DEPTH
+    FROM 
+        GB_CS_CASING c
+    WHERE 
+        c.PROJECT = '?Select Project?' AND c.SITE_ID = '?Select Site?'
+)
+SELECT
+    t.PROJECT,
+    t.SITE_ID,
+    CASE WHEN LAG(t.TO_DEPTH) OVER (ORDER BY t.TO_DEPTH) IS NULL THEN mcd.Max_TO_DEPTH ELSE LAG(t.TO_DEPTH) OVER (ORDER BY t.TO_DEPTH) END AS FROM_DEPTH,
+    t.TO_DEPTH,
+    CASE WHEN LAG(t.TO_DEPTH) OVER (ORDER BY t.TO_DEPTH) IS NULL THEN t.TO_DEPTH ELSE t.TO_DEPTH - LAG(t.TO_DEPTH) OVER (ORDER BY t.TO_DEPTH) END AS LENGTH,
+    t.HOLE_SIZE,
+    t.BIT_TYPE,
+    CASE 
+        WHEN LAG(t.TO_DEPTH) OVER (ORDER BY t.TO_DEPTH) IS NULL THEN ((POWER((CAST(t.HOLE_SIZE AS DECIMAL(9,2)) / 2),2) * PI()) * (t.TO_DEPTH - mcd.Max_TO_DEPTH)) / 1000
+        ELSE ((POWER((CAST(t.HOLE_SIZE AS DECIMAL(9,2)) / 2),2) * PI()) * (t.TO_DEPTH - LAG(t.TO_DEPTH) OVER (ORDER BY t.TO_DEPTH))) / 1000
+    END AS VOLUME
+INTO #TempDrillingTable
+FROM
+    #TempDrillingSubTable t
+CROSS JOIN
+    MaxCasingDepth mcd
+ORDER BY
+    t.TO_DEPTH;
+
+SELECT NULL;
+
+-- Extract required Drilling Details rows
+WITH OrderedDrilling AS (
+    SELECT 
+        *,
+        ROW_NUMBER() OVER (ORDER BY TO_DEPTH) AS RowNum
+    FROM 
+        #TempDrillingTable
+)
+SELECT * 
+FROM OrderedDrilling 
+WHERE RowNum = 1; -- Replace with n row required for data display
+
+-- Calculate volumes
+SELECT 
+    CAST(
+        (SELECT SUM(VOLUME) FROM #TempCasingTable) + 
+        (SELECT SUM(VOLUME) FROM #TempDrillingTable)
+        AS NVARCHAR(16)
+    ) + ' L' AS TotalSumVolume,
+    CAST(
+        CEILING(
+            ((SELECT SUM(VOLUME) FROM #TempCasingTable) + 
+            (SELECT SUM(VOLUME) FROM #TempDrillingTable)) / 32
+        ) AS NVARCHAR(16) 
+    ) + ' Bags' AS CEMENT,
+    CAST(
+        (
+            ((SELECT SUM(VOLUME) FROM #TempCasingTable) + 
+            (SELECT SUM(VOLUME) FROM #TempDrillingTable)) / 32
+        ) * 20 AS NVARCHAR(16) 
+    ) + ' L' AS WATER;
