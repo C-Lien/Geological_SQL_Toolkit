@@ -1,0 +1,130 @@
+WITH GetSampleLithology AS (
+	SELECT
+		l.PROJECT,
+		l.SITE_ID,
+		l.FROM_DEPTH,
+		l.TO_DEPTH,
+		l.LITHO_TYPE,
+		l.SEAM,
+		l.PLY,
+        l.RECORD_SEQ_FLAG,
+        s.SAMPLE_ID,
+        s.SAMPLE_PURPOSE,
+        s.COMMENTS,
+        s.DATE_INSERTED,
+        s.INSERTED_BY,
+        s.DATE_UPDATED,
+        s.UPDATED_BY
+	FROM
+		[dbo].[GB_CS_LITHOLOGY] l
+	LEFT JOIN
+        (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY SITE_ID, FROM_DEPTH, TO_DEPTH ORDER BY SAMPLE_ID) AS RN
+            FROM 
+                [dbo].[GB_CS_SAMPLE]
+    ) s ON l.SITE_ID = s.SITE_ID AND l.PROJECT = s.PROJECT AND s.RN = 1 AND (
+        l.FROM_DEPTH = s.FROM_DEPTH OR
+        l.TO_DEPTH = s.TO_DEPTH OR
+        (
+            l.FROM_DEPTH > s.FROM_DEPTH AND l.TO_DEPTH < s.TO_DEPTH
+        )
+    )
+	WHERE
+        l.PROJECT = :PROJECT --'CURRAGH' -- PROJECT
+        AND l.SITE_ID = :SITE_ID --'18431C' -- SITE_ID
+        AND s.SAMPLE_ID IS NOT NULL
+        AND l.RECORD_SEQ_FLAG = 1
+),
+
+IntervalLengths AS (
+    SELECT
+        SAMPLE_ID,
+        LITHO_TYPE,
+		PLY,
+		SEAM,
+        FROM_DEPTH,
+        TO_DEPTH,
+        (TO_DEPTH - FROM_DEPTH) AS INTERVAL_LENGTH
+    FROM 
+        GetSampleLithology
+),
+
+TotalLengths AS (
+    SELECT 
+        SAMPLE_ID,
+        SUM(INTERVAL_LENGTH) AS TOTAL_LENGTH
+    FROM 
+        IntervalLengths
+    GROUP BY 
+        SAMPLE_ID
+),
+LithoPercentages AS (
+    SELECT 
+        il.SAMPLE_ID,
+        il.LITHO_TYPE,
+		il.PLY,
+		il.SEAM,
+        il.INTERVAL_LENGTH,
+        CAST(((il.INTERVAL_LENGTH / tl.TOTAL_LENGTH) * 100) AS DECIMAL (5,2)) AS PERCENTAGE
+    FROM 
+        IntervalLengths il
+    JOIN 
+        TotalLengths tl ON il.SAMPLE_ID = tl.SAMPLE_ID
+),
+CombinedPercentages AS (
+    SELECT 
+        SAMPLE_ID,
+        LITHO_TYPE,
+		PLY,
+		SEAM,
+        SUM(PERCENTAGE) AS COMBINED_PERCENTAGE
+    FROM 
+        LithoPercentages
+    GROUP BY 
+        SAMPLE_ID, LITHO_TYPE, PLY, SEAM
+),
+ConcatenatedTypes AS (
+    SELECT 
+        SAMPLE_ID,
+        STRING_AGG(CAST(COMBINED_PERCENTAGE AS VARCHAR) + '% ' + LITHO_TYPE, ' ') WITHIN GROUP (ORDER BY LITHO_TYPE) AS LITHO_TYPES_PERCENTAGES,
+		STRING_AGG(CAST(COMBINED_PERCENTAGE AS VARCHAR) + '% ' + PLY, ' ') WITHIN GROUP (ORDER BY LITHO_TYPE) AS PLY_PERCENTAGES,
+		STRING_AGG(CAST(COMBINED_PERCENTAGE AS VARCHAR) + '% ' + SEAM, ' ') WITHIN GROUP (ORDER BY LITHO_TYPE) AS SEAM_PERCENTAGES
+    FROM 
+        CombinedPercentages
+    GROUP BY 
+        SAMPLE_ID
+)
+SELECT 
+    t.PROJECT,
+    t.SAMPLE_ID,
+    MIN(t.FROM_DEPTH) AS FROM_DEPTH,
+    MAX(t.TO_DEPTH) AS TO_DEPTH,
+	ctp.LITHO_TYPES_PERCENTAGES AS LITHO_TYPE,
+	ctp.SEAM_PERCENTAGES AS SEAM,
+	ctp.PLY_PERCENTAGES AS PLY,
+	t.SAMPLE_ID,
+	t.SAMPLE_PURPOSE,
+	t.COMMENTS,
+	t.DATE_INSERTED,
+	t.INSERTED_BY,
+	t.DATE_UPDATED,
+	t.UPDATED_BY
+FROM 
+    GetSampleLithology t
+JOIN 
+    ConcatenatedTypes ctp ON t.SAMPLE_ID = ctp.SAMPLE_ID
+GROUP BY 
+    t.PROJECT,
+	t.SAMPLE_ID, 
+	t.SAMPLE_PURPOSE,
+	t.COMMENTS,
+	t.DATE_INSERTED,
+	t.INSERTED_BY,
+	t.DATE_UPDATED,
+	t.UPDATED_BY,
+	ctp.LITHO_TYPES_PERCENTAGES,
+	ctp.PLY_PERCENTAGES,
+	ctp.SEAM_PERCENTAGES
+ORDER BY
+    FROM_DEPTH;
