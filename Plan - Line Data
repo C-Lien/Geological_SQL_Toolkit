@@ -1,0 +1,33 @@
+SELECT -- Project and Entity details, DRAW_TYPE is statically set as 'POLY'
+    PE.PROJECT,
+    EN.ENTITY + '_' + CAST(BD.INSTANCE AS VARCHAR(10)) AS ENTITY, -- Concatenated entity column
+    'POLY' AS DRAW_TYPE,
+    BP.POINT_ORDER, -- Point order details for the boundary
+
+    -- Co-ordinate details
+    PT.COORDSYS,
+    PT.NORTHING,
+    PT.EASTING,
+    PT.HEIGHT,
+ 
+    CASE -- Conditional colour assignment based on ENTITY_TYPE
+        WHEN EN.ENTITY_TYPE = 'MDL' THEN 'clGreen'
+        WHEN EN.ENTITY_TYPE = 'ML' THEN 'clBlue'
+        WHEN EN.ENTITY_TYPE = 'PS' THEN 'clRed'
+    END AS PEN_COLOUR  -- Added conditional colour assignment
+
+FROM -- Start of JOIN operations 
+    [DBO].[GB_PROJECT_ENTITY] AS PE
+    INNER JOIN [DBO].[GB_ENTITY] AS EN ON PE.ENTITY = EN.ENTITY -- Joining with GB_ENTITY table on ENTITY
+    INNER JOIN [DBO].[GB_BOUNDARY] AS BD ON EN.ENTITY = BD.ENTITY --AND BD.RANKING = 1 -- Joining with GB_BOUNDARY table on ENTITY and RANKING condition 
+    INNER JOIN [DBO].[GB_BOUNDARY_POINT] AS BP ON BD.ENTITY = BP.ENTITY AND BD.INSTANCE = BP.INSTANCE -- Joining with GB_BOUNDARY_POINT table on ENTITY and INSTANCE    
+    INNER JOIN [DBO].[GB_POINT] AS PT ON BP.POINT_NUMBER = PT.POINT_NUMBER -- Joining with GB_POINT table on POINT_NUMBER 
+
+WHERE -- Filter for a specific project 
+    PE.PROJECT = '?Select Project?' AND
+    '?Show Boundaries?' = 'Yes'
+
+ORDER BY -- Final result set ordered by PROJECT, ENTITY and POINT_ORDER   
+    PE.PROJECT, 
+    ENTITY,  -- Updated to order by the new concatenated entity column
+    BP.POINT_ORDER;
