@@ -1,0 +1,94 @@
+-- Declare selected site eastings and nothings, if exists
+DECLARE @userEasting FLOAT, @userNorthing FLOAT;
+
+SELECT 
+    @userEasting = EASTING,
+    @userNorthing = NORTHING
+FROM 
+    GB_CS_SITE_SURVEY
+WHERE 
+    SITE_ID = '?Select Site ID?'
+    AND RANKING = 1;
+
+-- Main query starts here
+SELECT  
+    S.PROJECT,  -- Selecting the project
+    S.SITE_ID,  -- Selecting the site ID
+
+    -- Subquery to get the maximum depth
+    
+        CASE
+            WHEN EXISTS (
+                SELECT 1 
+                FROM GB_LITHOLOGY_HISTORIC H
+                WHERE H.PROJECT = S.PROJECT AND H.SITE_ID = S.SITE_ID
+            )
+            THEN (
+                SELECT MAX(DEPTH_TO)
+                FROM GB_LITHOLOGY_HISTORIC H
+                WHERE H.PROJECT = S.PROJECT AND H.SITE_ID = S.SITE_ID
+            )
+            ELSE (
+                SELECT MAX(TO_DEPTH)
+                FROM GB_CS_LITHOLOGY L
+                WHERE L.PROJECT = S.PROJECT AND L.SITE_ID = S.SITE_ID
+            ) END AS END_DEPTH,
+
+    S.COORDSYS,  -- Selecting the coordinate system
+    S.EASTING,   -- Selecting the easting coordinate
+    S.NORTHING,  -- Selecting the northing coordinate
+    S.HEIGHT,    -- Selecting the height
+
+-- CASE statement to decide pen colour based on various conditions
+CASE 
+    WHEN S.SITE_ID = '?Select Site ID?' THEN 'clBlue'
+    WHEN 
+        -- Subquery to count entries in 'GEOPHYS_LAS_HEADER' for given PROJECT and SITE_ID
+        (
+            SELECT COUNT(*) 
+            FROM GB_GEOPHYS_LAS_HEADER G
+            WHERE G.PROJECT = S.PROJECT AND G.SITE_ID = S.SITE_ID
+        ) > 0 
+    THEN 'clGreen'
+    WHEN '?Include LASless Data?' = 'Yes' THEN 'clRed'
+    ELSE 'clYellow'
+END AS PEN_COLOUR
+
+--END AS PEN_COLOUR  -- Returns 'clRed' if any of the conditions are met, otherwise returns 'clGreen'. Renamed as 'PEN_COLOUR'
+
+FROM GB_CS_SITE_SURVEY S  -- Using table alias 'S' for GB_CS_SITE_SURVEY for ease of reading
+
+WHERE   
+    S.PROJECT = '?Select Project?'       -- Filtering data based on the Project selected by the user
+    AND S.COORDSYS IS NOT NULL           -- Ensuring to consider only those records where COORDSYS column is not null
+    AND ranking = 1                      -- Considering only those records where ranking is 1
+    AND (
+        '?Include LASless Data?' = 'Yes' -- If '?Include LASless Data?' equals 'Yes', include all data
+        OR EXISTS (
+            SELECT * 
+            FROM GB_GEOPHYS_LAS_HEADER G
+            WHERE G.PROJECT = S.PROJECT AND G.SITE_ID = S.SITE_ID
+        )
+    )
+    AND (
+        (
+            EXISTS (
+                SELECT * 
+                FROM GB_CS_SITE_SURVEY 
+                WHERE SITE_ID = '?Select Site ID?' AND '?Select Site ID?' IS NOT NULL
+            ) 
+            AND SQRT(POWER(S.EASTING - @userEasting, 2) + POWER(S.NORTHING - @userNorthing, 2)) <= '?Select Radius (m)?'
+        )
+        OR NOT EXISTS (
+            SELECT * 
+            FROM GB_CS_SITE_SURVEY 
+            WHERE SITE_ID = '?Select Site ID?'
+        )
+    )  
+    
+ORDER BY 
+    CASE WHEN S.SITE_ID = '?Select Site ID?' THEN 1 ELSE 0 END, 
+    S.PROJECT, 
+    S.SITE_ID;  -- Ordering data first by PROJECT and then by SITE_ID 
+
+-- End of the main query.
