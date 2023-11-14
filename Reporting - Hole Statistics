@@ -1,0 +1,122 @@
+WITH TotalCoredThickness AS (
+    SELECT 
+        SITE_ID, 
+        PROJECT, 
+        SUM(TO_DEPTH - FROM_DEPTH) AS TOTAL_CORED
+    FROM 
+        GB_CS_DRILLING
+    WHERE 
+        RUN_NO > 0
+    GROUP BY 
+        SITE_ID, PROJECT
+)
+
+SELECT
+    --LITHO.PROJECT,
+    SITE_DETAILS.AREA_SITE_ID AS 'Area ID',
+    LITHO.SITE_ID AS 'Site ID',
+    CAST( SITE_DETAILS.DATE_INSERTED AS DATE ) AS 'Date Inserted',
+    SITE_SURVEY.EASTING AS 'Easting',
+    SITE_SURVEY.NORTHING AS 'Northing',
+	SITE.END_DEPTH AS TD,
+	SITE.DEVIATION AS 'Deviation %',
+    --LITHO.TOTAL_DEPTH AS TD,
+    LITHO.TOTAL_CORED AS 'Cored Thickness',
+    LITHO.CORE_LOSS AS 'Total KL',
+    LITHO.[%_CORE_LOSS] AS 'KL %', 
+    LITHO.TOTAL_SEAM_THICKNESS AS 'Total Ply Thickness',
+	-- Add in a new column: Total Cored Ply
+    LITHO.SEAM_CORE_LOSS AS 'Total Ply Loss',
+    LITHO.[%_SEAM_CORE_LOSS] AS 'Ply KL %', -- Adjust this value to [Ply Loss / Total Cored Ply]
+    (CASE
+        WHEN RAW.SITE_ID IS NULL THEN NULL
+        ELSE LITHO.CORE_LOSS - RAW.KL 
+    END) AS 'KL Prod:Raw Diff',
+    (CASE
+        WHEN RAW.SITE_ID IS NULL THEN NULL
+        ELSE LITHO.TOTAL_DEPTH - RAW.EOH
+    END) AS 'TD Prod:Raw Diff'
+	
+FROM  
+(
+    SELECT
+       l.PROJECT,
+       l.SITE_ID,
+       MAX(l.TO_DEPTH) AS TOTAL_DEPTH,
+       tct.TOTAL_CORED,
+       CAST(CAST(ROUND(SUM(CASE WHEN l.LITHO_TYPE = 'KL' THEN l.TO_DEPTH - l.FROM_DEPTH END), 2) AS DECIMAL(5,2)) AS CHAR) AS CORE_LOSS,
+       CAST(CAST(ROUND(
+           SUM(CASE WHEN l.LITHO_TYPE = 'KL' THEN l.TO_DEPTH - l.FROM_DEPTH END) /
+           NULLIF(tct.TOTAL_CORED, 0) * 100, 2) AS FLOAT) AS CHAR) AS '%_CORE_LOSS',
+       CAST(CAST(ROUND(SUM(CASE WHEN PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END),2) AS DECIMAL(5,2)) AS CHAR) AS 'TOTAL_SEAM_THICKNESS',
+       CAST(CAST(ROUND(SUM(CASE WHEN l.LITHO_TYPE = 'KL' AND PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END), 2) AS FLOAT) AS CHAR) AS 'SEAM_CORE_LOSS',
+       CAST(CAST(ROUND(
+           SUM(CASE WHEN l.LITHO_TYPE = 'KL' AND PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END) / 
+           SUM(CASE WHEN l.PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END) * 100,2) AS DECIMAL(5,2)) AS CHAR) AS '%_SEAM_CORE_LOSS'
+    FROM 
+        GB_CS_LITHOLOGY l
+    LEFT JOIN
+        TotalCoredThickness tct ON tct.SITE_ID = l.SITE_ID AND tct.PROJECT = l.PROJECT
+    WHERE 
+        l.PROJECT = '?Select Project?' AND
+        l.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?'  
+    GROUP BY 
+        l.PROJECT,
+        l.SITE_ID,
+        tct.TOTAL_CORED
+) AS LITHO  
+
+LEFT JOIN 
+(
+    SELECT
+         SITE_ID,
+         SUM(CASE WHEN [LITHO_TYPE] = 'KL' THEN [TO_DEPTH] - [FROM_DEPTH] END) AS KL,
+         MAX([TO_DEPTH]) AS EOH
+    FROM 
+         dbo.GB_RAW_LITHOLOGY
+    WHERE 
+         PROJECT = '?Select Project?'       
+    GROUP BY 
+         SITE_ID
+) AS RAW
+ON LITHO.SITE_ID = RAW.SITE_ID
+
+INNER JOIN
+(
+    SELECT 
+        AREA_SITE_ID,
+        SITE_ID,
+        DATE_INSERTED
+    FROM dbo.GB_CS_SITE_DETAILS
+    WHERE 
+        PROJECT = '?Select Project?'
+) AS SITE_DETAILS
+ON LITHO.SITE_ID = SITE_DETAILS.SITE_ID
+
+INNER JOIN
+(
+    SELECT
+        EASTING,
+        NORTHING,
+        SITE_ID
+    FROM dbo.GB_CS_SITE_SURVEY
+    WHERE
+        PROJECT = '?Select Project?'  
+) AS SITE_SURVEY
+ON LITHO.SITE_ID = SITE_SURVEY.SITE_ID
+
+INNER JOIN
+(
+    SELECT
+        END_DEPTH,
+        DEVIATION,
+        SITE_ID
+    FROM dbo.GB_SITE
+    WHERE
+        PROJECT = '?Select Project?'  
+) AS SITE
+ON LITHO.SITE_ID = SITE.SITE_ID
+
+
+ORDER BY
+  DATE_INSERTED DESC;
