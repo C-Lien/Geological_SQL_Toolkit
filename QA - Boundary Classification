@@ -1,0 +1,104 @@
+-- Temporary table for concatenated ENTITY and INSTANCE values
+CREATE TABLE #BoundaryInstances (
+    EntityInstance VARCHAR(255)
+);
+
+-- Temporary table for stored values
+CREATE TABLE #TempSiteTable (
+    PROJECT NVARCHAR(16),
+    SITE_ID NVARCHAR(16),
+    AREA_SITE_ID NVARCHAR(16),
+    LEASE_NO NVARCHAR(10),
+    QA_LEASE_NO NVARCHAR(10),
+    SURVEY_ACCURACY NCHAR(1),
+    DATE_INSERTED SMALLDATETIME,
+    EASTING DECIMAL (9,2),
+    NORTHING DECIMAL (10,2),
+    HEIGHT DECIMAL (7,2)
+);
+
+-- Populate the temporary table
+INSERT INTO #BoundaryInstances (EntityInstance)
+SELECT DISTINCT (CAST(ENTITY AS VARCHAR(255)) + '_' + CAST(INSTANCE AS VARCHAR(10)))
+FROM [dbo].[GB_BOUNDARY];
+
+-- Declare the cursor for iterating over the temporary table
+DECLARE entity_cursor CURSOR FOR
+SELECT EntityInstance FROM #BoundaryInstances;
+
+-- Variable to hold the current EntityInstance combination
+DECLARE @EntityInstance VARCHAR(255);
+
+-- Open the cursor
+OPEN entity_cursor;
+
+-- Fetch the first value from the cursor
+FETCH NEXT FROM entity_cursor INTO @EntityInstance;
+
+-- Loop through all EntityInstance combinations
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+    -- Run geometry creation logic for each EntityInstance combination
+    WITH ordered_points AS (
+        SELECT 
+            p.EASTING, p.NORTHING,
+            ROW_NUMBER() OVER(ORDER BY b.POINT_ORDER) AS RowNumber
+        FROM [dbo].[GB_BOUNDARY]  bo
+        JOIN [dbo].[GB_BOUNDARY_POINT] b ON bo.ENTITY = b.ENTITY AND bo.INSTANCE = b.INSTANCE
+        JOIN [dbo].[GB_POINT] p ON b.POINT_NUMBER = p.POINT_NUMBER
+        WHERE (b.ENTITY + '_' + CAST(b.INSTANCE AS VARCHAR(10))) = @EntityInstance
+    ),
+    boundary AS (
+        SELECT
+            geometry::STPolyFromText(
+                'POLYGON ((' + 
+                STUFF(
+                    (SELECT ', ' + STR(EASTING, 9, 2) + ' ' + STR(NORTHING, 10, 2)
+                    FROM ordered_points
+                    ORDER BY RowNumber
+                    FOR XML PATH('')), 
+                1, 2, '') 
+                + '))', 20355) AS Boundary_Geom --CRS EPSG Set to Curragh ADG84_55S
+        FROM ordered_points
+        WHERE RowNumber = 1
+    )
+    INSERT INTO #TempSiteTable ( PROJECT, SITE_ID, AREA_SITE_ID, LEASE_NO, QA_LEASE_NO, SURVEY_ACCURACY, DATE_INSERTED, EASTING, NORTHING, HEIGHT )
+    SELECT 
+        s.[PROJECT],
+        s.[SITE_ID],
+        sd.[AREA_SITE_ID],
+        sd.[LEASE_NO],
+        (LEFT(@EntityInstance, CHARINDEX('_', @EntityInstance) - 1)),
+        s.[SURVEY_ACCURACY],
+        s.[DATE_INSERTED],
+        s.[EASTING],
+        s.[NORTHING],
+        s.[HEIGHT]
+    FROM [dbo].[GB_CS_SITE_SURVEY] s
+    CROSS JOIN boundary b
+    LEFT JOIN [dbo].[GB_CS_SITE_DETAILS] sd ON sd.PROJECT = s.PROJECT AND sd.SITE_ID = s.SITE_ID
+    WHERE 
+        b.Boundary_Geom.STContains(geometry::Point(s.EASTING, s.NORTHING, 20355)) = 1
+        AND s.PROJECT = '?Select project?'
+        AND (
+            s.DATE_INSERTED >= '?From Date?' 
+            AND s.DATE_INSERTED < DATEADD(day, 1, '?To Date?')
+        )
+        AND sd.[LEASE_NO] <> (LEFT(@EntityInstance, CHARINDEX('_', @EntityInstance) - 1))
+    ORDER BY s.[SITE_ID];
+
+    -- Fetch the next value from the cursor
+    FETCH NEXT FROM entity_cursor INTO @EntityInstance;
+END;
+
+-- Close and deallocate the cursor
+CLOSE entity_cursor;
+DEALLOCATE entity_cursor;
+
+SELECT * FROM #TempSiteTable
+ORDER BY DATE_INSERTED;
+
+-- Clean up temporary table
+DROP TABLE #BoundaryInstances;
+DROP TABLE #TempSiteTable;
