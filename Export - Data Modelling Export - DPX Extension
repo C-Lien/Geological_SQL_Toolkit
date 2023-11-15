@@ -1,0 +1,94 @@
+-- Part 1 - Collate required datasets and combine
+----------------------------------------------------------------------- Building VEOLOCITY dataset
+SELECT
+    d.SITE_ID AS SITE_ID,
+    FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT) AS DEPTH,
+    AVG(CASE WHEN d.LOG_TYPE = 'VELOCITY_20_MSF' AND d.LOG_VAL IS NOT NULL AND d.LOG_VAL <> 0 THEN d.LOG_VAL ELSE NULL END) AS AVG_VELOCITY
+INTO #Temp_VELOCITY
+FROM
+    dbo].[GB_GEOPHYS_LAS_DATA] d
+WHERE
+    d.PROJECT = '?Select Project?'
+    AND EXISTS (SELECT 1 FROM [dbo].[TEMP_MX_SURVEY] WHERE BoreID = d.SITE_ID)
+    AND '?Include GPX Data?' = 'Yes'
+GROUP BY
+    SITE_ID,
+    FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT);
+
+----------------------------------------------------------------------- Building SONIC dataset and transform
+
+SELECT
+    d.SITE_ID AS SITE_ID,
+    FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT) AS DEPTH,
+    AVG(CASE WHEN d.LOG_TYPE = 'SONIC_20' AND d.LOG_VAL IS NOT NULL AND d.LOG_VAL <> 0 THEN (1/d.LOG_VAL)*1000000 ELSE NULL END) AS AVG_SONIC
+INTO #Temp_SONIC
+FROM
+    [dbo].[GB_GEOPHYS_LAS_DATA] d
+WHERE
+    d.PROJECT = '?Select Project?'
+    AND EXISTS (SELECT 1 FROM [dbo].[TEMP_MX_SURVEY] WHERE BoreID = d.SITE_ID)
+    AND '?Include GPX Data?' = 'Yes'
+GROUP BY
+    SITE_ID,
+    FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT);
+
+----------------------------------------------------------------------- Coalesce datasets
+
+SELECT
+    COALESCE(v.SITE_ID, s.SITE_ID) AS BoreID,
+    COALESCE(v.DEPTH, s.DEPTH) AS ToGeop,
+    COALESCE(v.AVG_VELOCITY, s.AVG_SONIC) AS SO2FUF
+INTO #Temp_SO2FUF
+FROM
+    #Temp_VELOCITY v
+FULL OUTER JOIN
+    #Temp_SONIC s ON v.SITE_ID = s.SITE_ID AND v.DEPTH = s.DEPTH;
+
+----------------------------------------------------------------------- Extract datasets
+
+SELECT
+    d.SITE_ID AS BoreID,
+    FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT) AS ToGeop,
+    AVG(CASE WHEN d.LOG_TYPE = 'CALIPER_MM' THEN d.LOG_VAL ELSE NULL END) AS CALLMM,
+    AVG(CASE WHEN d.LOG_TYPE = 'GAMMA_API' THEN d.LOG_VAL ELSE NULL END) AS GAMMAP,
+    AVG(CASE WHEN d.LOG_TYPE = 'SHORT_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) AS DESSGC,
+    AVG(CASE WHEN d.LOG_TYPE = 'LONG_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) AS DELSGC,
+    AVG(CASE WHEN d.LOG_TYPE = 'FE_RESISTIVITY_SHALLOW_OHM' THEN d.LOG_VAL ELSE NULL END) AS RESHOM,
+    AVG(CASE WHEN d.LOG_TYPE = 'SHORT_NEUTRON_SNU' THEN d.LOG_VAL ELSE NULL END) AS NESSSN
+INTO #Temp_GPX
+FROM
+    [dbo].[GB_GEOPHYS_LAS_DATA] d
+WHERE
+    d.PROJECT = '?Select Project?'
+    AND EXISTS (SELECT 1 FROM [dbo].[TEMP_MX_SURVEY] WHERE BoreID = d.SITE_ID)
+    AND '?Include GPX Data?' = 'Yes'
+GROUP BY
+    d.SITE_ID,
+    FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT)
+HAVING
+    AVG(CASE WHEN d.LOG_TYPE = 'CALIPER_MM' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'GAMMA_API' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'SHORT_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'LONG_DENSITY_GCC' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'FE_RESISTIVITY_SHALLOW_OHM' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+    OR AVG(CASE WHEN d.LOG_TYPE = 'SHORT_NEUTRON_SNU' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL;
+
+----------------------------------------------------------------------- Calculate UCS and Export
+SELECT
+	g.BoreID,
+	g.ToGeop,
+	g.CALLMM,
+	g.GAMMAP,
+	g.DESSGC,
+	g.DELSGC,
+	g.RESHOM,
+	g.NESSSN,
+	s.SO2FUF,
+	0.2597 * EXP(0.0013 * s.SO2FUF) AS CALCUCS
+FROM
+	#Temp_GPX g
+JOIN
+	#Temp_SO2FUF s ON g.BoreID = s.BoreID AND g.ToGeop = s.ToGeop
+ORDER BY
+	BoreID,
+	ToGeop
