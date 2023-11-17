@@ -59,7 +59,7 @@ BEGIN
                     ORDER BY RowNumber
                     FOR XML PATH('')), 
                 1, 2, '') 
-                + '))', 20355) AS Boundary_Geom --CRS EPSG Set to Curragh ADG84_55S
+                + '))', 20355) AS Boundary_Geom --CRS EPSG Set to ADG84_55S
         FROM ordered_points
         WHERE RowNumber = 1
     )
