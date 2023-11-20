@@ -1,0 +1,90 @@
+-- Currently not calculating final Deviation values correctly - WIP
+
+DROP TABLE IF EXISTS #TempSurveyTable;
+
+SELECT
+    s.PROJECT,
+    s.SITE_ID,
+    d.DEPTH,
+	CASE 
+		WHEN LAG(d.DEPTH) OVER (PARTITION BY s.SITE_ID ORDER BY d.DEPTH ASC) IS NULL THEN 0
+		ELSE d.DEPTH - LAG(d.DEPTH) OVER (PARTITION BY s.SITE_ID ORDER BY d.DEPTH ASC)
+	END AS INTERVAL,
+    MAX(CASE WHEN d.LOG_TYPE = 'BOREHOLE_AZI' THEN d.LOG_VAL ELSE NULL END) AS AZIMUTH,
+    MAX(CASE WHEN d.LOG_TYPE = 'BOREHOLE_TILT' THEN -90 + d.LOG_VAL ELSE NULL END) AS INCLINATION
+INTO #TempSurveyTable
+FROM
+	[dbo].[GB_SITE] s
+JOIN
+    [dbo].[GB_GEOPHYS_LAS_DATA] d ON s.PROJECT = d.PROJECT AND s.SITE_ID = d.SITE_ID
+WHERE
+    d.SITE_ID = '6041D'
+    AND d.PROJECT = 'KESTREL'
+GROUP BY
+    s.PROJECT,
+    s.SITE_ID,
+    d.DEPTH
+HAVING
+	MAX(CASE WHEN d.LOG_TYPE = 'BOREHOLE_AZI' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
+	OR MAX(CASE WHEN d.LOG_TYPE = 'BOREHOLE_TILT' THEN -90 + d.LOG_VAL ELSE NULL END) IS NOT NULL;
+
+WITH RankedData AS (
+    SELECT
+        DEPTH,
+        INCLINATION,
+        AZIMUTH,
+        LAG(DEPTH) OVER (ORDER BY DEPTH) AS PrevDepth
+    FROM
+        #TempSurveyTable
+),
+CalculatedData AS (
+    SELECT
+        DEPTH,
+        INCLINATION AS I1,
+        AZIMUTH AS A1,
+        LEAD(INCLINATION) OVER (ORDER BY DEPTH) AS I2,
+        LEAD(AZIMUTH) OVER (ORDER BY DEPTH) AS A2,
+        DEPTH - COALESCE(PrevDepth, 0) AS MD
+    FROM
+        RankedData
+),
+DLSData AS (
+	SELECT
+		*,
+		CASE
+            WHEN MD = 0 THEN 0
+            ELSE (180/PI()) * ACOS(COS(RADIANS(I2 - I1)) - (SIN(RADIANS(I1)) * SIN(RADIANS(I2)) * (1 - COS(RADIANS(A2 - A1))))) / MD
+        END AS DLS
+	FROM
+	    CalculatedData
+),
+CurvatureData AS (
+    SELECT
+        *,
+        COALESCE(DEPTH - LAG(DEPTH) OVER (ORDER BY DEPTH), 0) AS DeltaDepth,
+        CASE 
+            WHEN DLS = 0 THEN MD
+            ELSE (2 / DLS) * TAN(DLS / 2)
+        END AS RF
+    FROM
+		DLSData
+),
+FinalCalculations AS (
+    SELECT
+        *,
+        SUM(MD/2 * (SIN(RADIANS(I1)) * SIN(RADIANS(A1)) + SIN(RADIANS(I2)) * SIN(RADIANS(A2))) * RF) OVER (ORDER BY DEPTH DESC) AS CumulativeEast,
+        SUM(MD/2 * (SIN(RADIANS(I1)) * COS(RADIANS(A1)) + SIN(RADIANS(I2)) * COS(RADIANS(A2))) * RF) OVER (ORDER BY DEPTH DESC) AS CumulativeNorth,
+        MAX(DEPTH + (MD/2 * (COS(RADIANS(I1)) + COS(RADIANS(I2))) * RF)) OVER () AS FinalTVD
+    FROM 
+        CurvatureData
+)
+SELECT TOP 5
+    DEPTH,
+    FinalTVD,
+    CumulativeEast as TotalEast,
+    CumulativeNorth as TotalNorth,
+    SQRT(POWER(CumulativeEast, 2) + POWER(CumulativeNorth, 2)) as FinalDevM
+FROM 
+    FinalCalculations 
+ORDER BY 
+    DEPTH DESC;
