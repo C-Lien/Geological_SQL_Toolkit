@@ -77,6 +77,9 @@ WHERE
                 FROM GB_CS_SITE_SURVEY 
                 WHERE SITE_ID = '?Select Site ID?' AND '?Select Site ID?' IS NOT NULL
             ) 
+            -- SQRT slow but perfectly functional for site counts up to ~60,000; if encounter runtime concerns refer to: 
+            -- https://stackoverflow.com/questions/2637700/is-it-possible-to-roll-a-significantly-faster-version-of-sqrt
+            -- Greater timecost are sunk into verticies for Plan View operations however. Consider re-evaluating those first.
             AND SQRT(POWER(S.EASTING - @userEasting, 2) + POWER(S.NORTHING - @userNorthing, 2)) <= '?Select Radius (m)?'
         )
         OR NOT EXISTS (
