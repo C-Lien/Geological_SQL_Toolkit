@@ -15,12 +15,13 @@ SELECT
     --LITHO.PROJECT,
     SITE_DETAILS.AREA_SITE_ID AS 'Area ID',
     LITHO.SITE_ID AS 'Site ID',
-    CAST( SITE_DETAILS.DATE_INSERTED AS DATE ) AS 'Date Inserted',
+    CAST( SITE.DATE_INSERTED AS DATE ) AS 'Date Inserted',
     SITE_SURVEY.EASTING AS 'Easting',
     SITE_SURVEY.NORTHING AS 'Northing',
 	SITE.END_DEPTH AS TD,
 	SITE.DEVIATION AS 'Deviation %',
     --LITHO.TOTAL_DEPTH AS TD,
+	SAMPLE.SAMPLES AS '# of Samples',
     LITHO.TOTAL_CORED AS 'Cored Thickness',
     LITHO.CORE_LOSS AS 'Total KL',
     LITHO.[%_CORE_LOSS] AS 'KL %', 
@@ -57,9 +58,16 @@ FROM
         GB_CS_LITHOLOGY l
     LEFT JOIN
         TotalCoredThickness tct ON tct.SITE_ID = l.SITE_ID AND tct.PROJECT = l.PROJECT
+	LEFT JOIN
+	    dbo.GB_SITE SITE ON l.SITE_ID = SITE.SITE_ID AND l.PROJECT = SITE.PROJECT
     WHERE 
-        l.PROJECT = '?Select Project?' AND
-        l.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?'  
+        SITE.PROJECT = '?Select Project?' AND
+        SITE.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?'  
+        AND (
+            '?Include Blastholes?' = 'Yes' 
+            OR
+            ('?Include Blastholes?' = 'No' AND SITE.SITE_ID NOT LIKE 'PS%')
+        )
     GROUP BY 
         l.PROJECT,
         l.SITE_ID,
@@ -85,8 +93,7 @@ INNER JOIN
 (
     SELECT 
         AREA_SITE_ID,
-        SITE_ID,
-        DATE_INSERTED
+        SITE_ID
     FROM dbo.GB_CS_SITE_DETAILS
     WHERE 
         PROJECT = '?Select Project?'
@@ -110,13 +117,26 @@ INNER JOIN
     SELECT
         END_DEPTH,
         DEVIATION,
-        SITE_ID
+        SITE_ID,
+		DATE_INSERTED
     FROM dbo.GB_SITE
     WHERE
         PROJECT = '?Select Project?'  
 ) AS SITE
 ON LITHO.SITE_ID = SITE.SITE_ID
 
+INNER JOIN
+(
+    SELECT    
+        SITE_ID,
+        COUNT(*) AS SAMPLES
+    FROM dbo.GB_CS_SAMPLE
+    WHERE
+        PROJECT = '?Select Project?'
+	GROUP BY
+		SITE_ID
+) AS SAMPLE
+ON LITHO.SITE_ID = SAMPLE.SITE_ID
 
 ORDER BY
   DATE_INSERTED DESC;
