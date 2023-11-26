@@ -1,0 +1,2562 @@
+<?xml version="1.0" encoding="utf-16"?>
+<objects type="GBIS" version="8.0">
+  <object type="TGbClipBoard">
+    <name>TGbClipBoard</name>
+    <description>TGbClipBoard</description>
+    <ImageIndex>0</ImageIndex>
+    <contcls>TGbNodeDataViews</contcls>
+    <objname>Data Views</objname>
+    <object type="TGbConfigDataView" SupportedVersion="11.0.309.0">
+      <name>Reporting - Drilling Summary v1.0</name>
+      <description>Drilling report Data View extracted by date drilled</description>
+      <ImageIndex>0</ImageIndex>
+      <IsSystemObject>0</IsSystemObject>
+      <SystemName />
+      <SystemGuid />
+      <align>1</align>
+      <object type="TGbSubstitutionParameters">
+        <name>Substitution Parameters</name>
+        <description>Substitution Parameters</description>
+        <ImageIndex>11</ImageIndex>
+        <object type="TGbSubstitutionParameter">
+          <name>Select Project</name>
+          <description>Select Project</description>
+          <ImageIndex>11</ImageIndex>
+          <acceptnull>0</acceptnull>
+          <accblnnull>0</accblnnull>
+          <dflt>DEFAULT</dflt>
+          <example />
+          <datefmt>yyyy/MM/dd</datefmt>
+          <timefmt>hh:mm:ss</timefmt>
+          <fldtype>String</fldtype>
+          <prompt>Select Project</prompt>
+          <strict>1</strict>
+          <noquotes>0</noquotes>
+          <usenprefix>0</usenprefix>
+          <upper>0</upper>
+          <usedflt>1</usedflt>
+          <fileext />
+          <savedlg>0</savedlg>
+          <isfldr>0</isfldr>
+          <lkpfld>PROJECT</lkpfld>
+          <dovalidation>1</dovalidation>
+          <usesqlpl>0</usesqlpl>
+          <uniqueid>218FDAA3-573B-483A-9C90-E394E052890A</uniqueid>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT PROJECT FROM GB_PROJECT</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+            </object>
+          </object>
+        </object>
+        <object type="TGbSubstitutionParameter">
+          <name>Start Date</name>
+          <description>Date from Substitution Parameter</description>
+          <ImageIndex>11</ImageIndex>
+          <acceptnull>0</acceptnull>
+          <accblnnull>1</accblnnull>
+          <dflt>$DATE</dflt>
+          <example>26/11/2023</example>
+          <datefmt>dd/mm/yyyy</datefmt>
+          <timefmt>hh:mm:ss</timefmt>
+          <fldtype>Date</fldtype>
+          <prompt>Select Start Date</prompt>
+          <strict>0</strict>
+          <noquotes>0</noquotes>
+          <usenprefix>0</usenprefix>
+          <upper>0</upper>
+          <usedflt>1</usedflt>
+          <fileext />
+          <savedlg>0</savedlg>
+          <isfldr>0</isfldr>
+          <lkpfld />
+          <dovalidation>1</dovalidation>
+          <usesqlpl>0</usesqlpl>
+          <uniqueid>959F8817-DC02-4E46-B2FD-08339DE5CC57</uniqueid>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql />
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+          </object>
+        </object>
+        <object type="TGbSubstitutionParameter">
+          <name>End Date</name>
+          <description>Date To Substitution Parameter</description>
+          <ImageIndex>11</ImageIndex>
+          <acceptnull>0</acceptnull>
+          <accblnnull>1</accblnnull>
+          <dflt>$DATE</dflt>
+          <example>26/11/2023</example>
+          <datefmt>dd/mm/yyyy</datefmt>
+          <timefmt>hh:mm:ss</timefmt>
+          <fldtype>Date</fldtype>
+          <prompt>Select End Date</prompt>
+          <strict>0</strict>
+          <noquotes>0</noquotes>
+          <usenprefix>0</usenprefix>
+          <upper>0</upper>
+          <usedflt>1</usedflt>
+          <fileext />
+          <savedlg>0</savedlg>
+          <isfldr>0</isfldr>
+          <lkpfld />
+          <dovalidation>1</dovalidation>
+          <usesqlpl>0</usesqlpl>
+          <uniqueid>DBAFF732-ABA5-4F13-B7C7-B212914FD492</uniqueid>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql />
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+          </object>
+        </object>
+        <object type="TGbSubstitutionParameter">
+          <name>Include Blastholes</name>
+          <description>Include or exclude holes prefix'd 'PS'</description>
+          <ImageIndex>11</ImageIndex>
+          <acceptnull>0</acceptnull>
+          <accblnnull>0</accblnnull>
+          <dflt>No</dflt>
+          <example />
+          <datefmt>yyyy/MM/dd</datefmt>
+          <timefmt>hh:mm:ss</timefmt>
+          <fldtype>String</fldtype>
+          <prompt>Include Blastholes</prompt>
+          <strict>1</strict>
+          <noquotes>0</noquotes>
+          <usenprefix>0</usenprefix>
+          <upper>0</upper>
+          <usedflt>1</usedflt>
+          <fileext />
+          <savedlg>0</savedlg>
+          <isfldr>0</isfldr>
+          <lkpfld />
+          <dovalidation>1</dovalidation>
+          <usesqlpl>0</usesqlpl>
+          <uniqueid>C0DE8F74-3604-49C7-AD61-20DE9F9BA3A9</uniqueid>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT 'Yes'
+UNION ALL
+SELECT 'No'</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object type="TGbDatasets">
+        <name>Datasets</name>
+        <description>Datasets</description>
+        <ImageIndex>0</ImageIndex>
+        <object type="TGbConfigSelectQuery">
+          <name>METERS DRILLED</name>
+          <description>METERS DRILLED Select Query</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>--TOTAL HOLES AND METERS DRILLED
+SELECT 
+SUM(T1.END_DEPTH) AS TOTAL_METERS_DRILLED
+,COUNT(*) AS NO_OF_HOLES_DRILLED
+FROM GB_SITE T1
+WHERE 
+    T1.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?' 
+    AND T1.PROJECT = '?Select Project?'
+    AND (
+        '?Include Blastholes?' = 'Yes' 
+        OR
+        ('?Include Blastholes?' = 'No' AND T1.SITE_ID NOT LIKE 'PS%')
+    )</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>TOTAL_METERS_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TOTAL_METERS_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>NO_OF_HOLES_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>NO_OF_HOLES_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Integer</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+        <object type="TGbConfigSelectQuery">
+          <name>METERS DRILLED BY DRILL COMPANY</name>
+          <description>METERS DRILLED BY DRILL COMPANY Select Query</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT SUM(MAX_DEPTH)AS TOTAL_METERS_DRILLED , DRILL_COMPANY 
+FROM
+(
+SELECT T2.SITE_ID, MAX(TO_DEPTH) AS MAX_DEPTH
+,DRILL_COMPANY
+FROM GB_SITE T1
+LEFT JOIN GB_CS_DRILLING T2
+ON T1.PROJECT = T2.PROJECT
+AND T1.SITE_ID = T2.SITE_ID
+WHERE 
+    T1.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?' 
+    AND T1.PROJECT = '?Select Project?'
+    AND (
+        '?Include Blastholes?' = 'Yes' 
+        OR
+        ('?Include Blastholes?' = 'No' AND T1.SITE_ID NOT LIKE 'PS%')
+    )
+
+GROUP BY 
+T2.SITE_ID,
+DRILL_COMPANY
+
+)A
+
+GROUP BY DRILL_COMPANY
+ORDER BY DRILL_COMPANY</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>TOTAL_METERS_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TOTAL_METERS_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>DRILL_COMPANY</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>DRILL_COMPANY</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+        <object type="TGbConfigSelectQuery">
+          <name>METERS DRILLED BY HOLE TYPE</name>
+          <description>METERS DRILLED BY HOLE TYPE Select Query</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT SUM(END_DEPTH) AS TOTAL_METERS_DRILLED
+,HOLE_TYPE
+FROM GB_SITE T1
+LEFT JOIN GB_CS_SITE_DETAILS T2
+ON T1.PROJECT = T2.PROJECT
+AND T1.SITE_ID = T2.SITE_ID
+WHERE 
+    T1.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?' 
+    AND T1.PROJECT = '?Select Project?'
+    AND (
+        '?Include Blastholes?' = 'Yes' 
+        OR
+        ('?Include Blastholes?' = 'No' AND T1.SITE_ID NOT LIKE 'PS%')
+    )
+
+GROUP BY HOLE_TYPE</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>TOTAL_METERS_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TOTAL_METERS_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>HOLE_TYPE</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>HOLE_TYPE</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+        <object type="TGbConfigSelectQuery">
+          <name>METERS DRILLED BY HOLE PURPOSE</name>
+          <description>METERS DRILLED BY HOLE PURPOSE</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT SUM(END_DEPTH) AS TOTAL_METERS_DRILLED
+,HOLE_PURPOSE_1
+,HOLE_PURPOSE_2
+FROM GB_SITE T1
+LEFT JOIN GB_CS_SITE_DETAILS T2
+ON T1.PROJECT = T2.PROJECT
+AND T1.SITE_ID = T2.SITE_ID
+WHERE 
+    T1.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?' 
+    AND T1.PROJECT = '?Select Project?'
+    AND (
+        '?Include Blastholes?' = 'Yes' 
+        OR
+        ('?Include Blastholes?' = 'No' AND T1.SITE_ID NOT LIKE 'PS%')
+    )
+
+GROUP BY HOLE_PURPOSE_1, HOLE_PURPOSE_2</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>TOTAL_METERS_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TOTAL_METERS_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>HOLE_PURPOSE_1</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>HOLE_PURPOSE_1</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>HOLE_PURPOSE_2</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>HOLE_PURPOSE_2</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+        <object type="TGbConfigSelectQuery">
+          <name>METERS DRILLED BY DRILL RIG</name>
+          <description>METERS DRILLED BY DRILL RIG Select Query</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT SUM(MAX_DEPTH)AS TOTAL_METERS_DRILLED , RIG_TYPE 
+FROM
+(
+SELECT T2.SITE_ID, MAX(TO_DEPTH) AS MAX_DEPTH
+,RIG_TYPE
+FROM GB_SITE T1
+LEFT JOIN GB_CS_DRILLING T2
+ON T1.PROJECT = T2.PROJECT
+AND T1.SITE_ID = T2.SITE_ID
+WHERE 
+    T1.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?' 
+    AND T1.PROJECT = '?Select Project?'
+    AND (
+        '?Include Blastholes?' = 'Yes' 
+        OR
+        ('?Include Blastholes?' = 'No' AND T1.SITE_ID NOT LIKE 'PS%')
+    )
+
+GROUP BY 
+T2.SITE_ID,
+RIG_TYPE
+
+)A
+
+GROUP BY RIG_TYPE
+ORDER BY RIG_TYPE</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>TOTAL_METERS_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TOTAL_METERS_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+                <object type="TGbSQLScriptDefault">
+                  <name>Default Value SQL</name>
+                  <description>Default Value SQL</description>
+                  <ImageIndex>13</ImageIndex>
+                  <sql />
+                  <rslt>1</rslt>
+                  <proc>0</proc>
+                  <dynam>0</dynam>
+                </object>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>RIG_TYPE</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>RIG_TYPE</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+        <object type="TGbConfigSelectQuery">
+          <name>METERS DRILLED BY LEASE NO</name>
+          <description>METERS DRILLED BY LEASE NO Select Query</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>SELECT SUM(END_DEPTH) AS TOTAL_METERS_DRILLED
+,LEASE_NO
+FROM GB_SITE T1
+LEFT JOIN GB_CS_SITE_DETAILS T2
+ON T1.PROJECT = T2.PROJECT
+AND T1.SITE_ID = T2.SITE_ID
+WHERE 
+    T1.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?' 
+    AND T1.PROJECT = '?Select Project?'
+    AND (
+        '?Include Blastholes?' = 'Yes' 
+        OR
+        ('?Include Blastholes?' = 'No' AND T1.SITE_ID NOT LIKE 'PS%')
+    )
+
+GROUP BY LEASE_NO</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>TOTAL_METERS_DRILLED</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TOTAL_METERS_DRILLED</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>LEASE_NO</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>LEASE_NO</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+        <object type="TGbConfigSelectQuery">
+          <name>Hole Summary</name>
+          <description>Hole Summary Select Query</description>
+          <ImageIndex>13</ImageIndex>
+          <IsSystemObject>0</IsSystemObject>
+          <SystemName />
+          <SystemGuid />
+          <masterdset />
+          <FReadOnly>1</FReadOnly>
+          <FRunOnServer>0</FRunOnServer>
+          <FIsRequired>0</FIsRequired>
+          <FDescriptionFields />
+          <paged>0</paged>
+          <rowspp>50</rowspp>
+          <object type="TGbSQLScript">
+            <name>SQL Script</name>
+            <description>SQL Script</description>
+            <ImageIndex>0</ImageIndex>
+            <sql>WITH TotalCoredThickness AS (
+    SELECT 
+        SITE_ID, 
+        PROJECT, 
+        SUM(TO_DEPTH - FROM_DEPTH) AS TOTAL_CORED
+    FROM 
+        GB_CS_DRILLING
+    WHERE 
+        RUN_NO &gt; 0
+    GROUP BY 
+        SITE_ID, PROJECT
+)
+
+SELECT
+    --LITHO.PROJECT,
+    SITE_DETAILS.AREA_SITE_ID AS 'Area ID',
+    LITHO.SITE_ID AS 'Site ID',
+    CAST( SITE.DATE_INSERTED AS DATE ) AS 'Date Inserted',
+    SITE_SURVEY.EASTING AS 'Easting',
+    SITE_SURVEY.NORTHING AS 'Northing',
+	SITE.END_DEPTH AS TD,
+	SITE.DEVIATION AS 'Deviation %',
+    --LITHO.TOTAL_DEPTH AS TD,
+	SAMPLE.SAMPLES AS '# of Samples',
+    LITHO.TOTAL_CORED AS 'Cored Thickness',
+    LITHO.CORE_LOSS AS 'Total KL',
+    LITHO.[%_CORE_LOSS] AS 'KL %', 
+    LITHO.TOTAL_SEAM_THICKNESS AS 'Total Ply Thickness',
+	-- Add in a new column: Total Cored Ply
+    LITHO.SEAM_CORE_LOSS AS 'Total Ply Loss',
+    LITHO.[%_SEAM_CORE_LOSS] AS 'Ply KL %', -- Adjust this value to [Ply Loss / Total Cored Ply]
+    (CASE
+        WHEN RAW.SITE_ID IS NULL THEN NULL
+        ELSE LITHO.CORE_LOSS - RAW.KL 
+    END) AS 'KL Prod:Raw Diff',
+    (CASE
+        WHEN RAW.SITE_ID IS NULL THEN NULL
+        ELSE LITHO.TOTAL_DEPTH - RAW.EOH
+    END) AS 'TD Prod:Raw Diff'
+	
+FROM  
+(
+    SELECT
+       l.PROJECT,
+       l.SITE_ID,
+       MAX(l.TO_DEPTH) AS TOTAL_DEPTH,
+       tct.TOTAL_CORED,
+       CAST(CAST(ROUND(SUM(CASE WHEN l.LITHO_TYPE = 'KL' THEN l.TO_DEPTH - l.FROM_DEPTH END), 2) AS DECIMAL(5,2)) AS CHAR) AS CORE_LOSS,
+       CAST(CAST(ROUND(
+           SUM(CASE WHEN l.LITHO_TYPE = 'KL' THEN l.TO_DEPTH - l.FROM_DEPTH END) /
+           NULLIF(tct.TOTAL_CORED, 0) * 100, 2) AS FLOAT) AS CHAR) AS '%_CORE_LOSS',
+       CAST(CAST(ROUND(SUM(CASE WHEN PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END),2) AS DECIMAL(5,2)) AS CHAR) AS 'TOTAL_SEAM_THICKNESS',
+       CAST(CAST(ROUND(SUM(CASE WHEN l.LITHO_TYPE = 'KL' AND PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END), 2) AS FLOAT) AS CHAR) AS 'SEAM_CORE_LOSS',
+       CAST(CAST(ROUND(
+           SUM(CASE WHEN l.LITHO_TYPE = 'KL' AND PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END) / 
+           SUM(CASE WHEN l.PLY IS NOT NULL THEN l.TO_DEPTH - l.FROM_DEPTH END) * 100,2) AS DECIMAL(5,2)) AS CHAR) AS '%_SEAM_CORE_LOSS'
+    FROM 
+        GB_CS_LITHOLOGY l
+    LEFT JOIN
+        TotalCoredThickness tct ON tct.SITE_ID = l.SITE_ID AND tct.PROJECT = l.PROJECT
+	LEFT JOIN
+	    dbo.GB_SITE SITE ON l.SITE_ID = SITE.SITE_ID AND l.PROJECT = SITE.PROJECT
+    WHERE 
+        SITE.PROJECT = '?Select Project?' AND
+        SITE.DATE_INSERTED BETWEEN '?Select Start Date?' AND '?Select End Date?'  
+        AND (
+            '?Include Blastholes?' = 'Yes' 
+            OR
+            ('?Include Blastholes?' = 'No' AND SITE.SITE_ID NOT LIKE 'PS%')
+        )
+    GROUP BY 
+        l.PROJECT,
+        l.SITE_ID,
+        tct.TOTAL_CORED
+) AS LITHO  
+
+LEFT JOIN 
+(
+    SELECT
+         SITE_ID,
+         SUM(CASE WHEN [LITHO_TYPE] = 'KL' THEN [TO_DEPTH] - [FROM_DEPTH] END) AS KL,
+         MAX([TO_DEPTH]) AS EOH
+    FROM 
+         dbo.GB_RAW_LITHOLOGY
+    WHERE 
+         PROJECT = '?Select Project?'       
+    GROUP BY 
+         SITE_ID
+) AS RAW
+ON LITHO.SITE_ID = RAW.SITE_ID
+
+INNER JOIN
+(
+    SELECT 
+        AREA_SITE_ID,
+        SITE_ID
+    FROM dbo.GB_CS_SITE_DETAILS
+    WHERE 
+        PROJECT = '?Select Project?'
+) AS SITE_DETAILS
+ON LITHO.SITE_ID = SITE_DETAILS.SITE_ID
+
+INNER JOIN
+(
+    SELECT
+        EASTING,
+        NORTHING,
+        SITE_ID
+    FROM dbo.GB_CS_SITE_SURVEY
+    WHERE
+        PROJECT = '?Select Project?'  
+) AS SITE_SURVEY
+ON LITHO.SITE_ID = SITE_SURVEY.SITE_ID
+
+INNER JOIN
+(
+    SELECT
+        END_DEPTH,
+        DEVIATION,
+        SITE_ID,
+		DATE_INSERTED
+    FROM dbo.GB_SITE
+    WHERE
+        PROJECT = '?Select Project?'  
+) AS SITE
+ON LITHO.SITE_ID = SITE.SITE_ID
+
+INNER JOIN
+(
+    SELECT    
+        SITE_ID,
+        COUNT(*) AS SAMPLES
+    FROM dbo.GB_CS_SAMPLE
+    WHERE
+        PROJECT = '?Select Project?'
+	GROUP BY
+		SITE_ID
+) AS SAMPLE
+ON LITHO.SITE_ID = SAMPLE.SITE_ID
+
+ORDER BY
+  DATE_INSERTED DESC;</sql>
+            <rslt>1</rslt>
+            <proc>0</proc>
+            <dynam>0</dynam>
+            <object type="TGbDatasetColumns">
+              <name>Dataset Columns</name>
+              <description>Dataset Columns</description>
+              <ImageIndex>42</ImageIndex>
+              <overridecolumnorder>0</overridecolumnorder>
+              <object type="TGbDatasetColumn">
+                <name>Area ID</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Area ID</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Site ID</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Site ID</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Date Inserted</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Date Inserted</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>WideString</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Easting</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Easting</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Northing</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Northing</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>TD</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TD</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Deviation %</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Deviation %</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name># of Samples</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label># of Samples</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Integer</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Cored Thickness</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Cored Thickness</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Total KL</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Total KL</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>String</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>KL %</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>KL %</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>String</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Total Ply Thickness</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Total Ply Thickness</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>String</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Total Ply Loss</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Total Ply Loss</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>String</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>Ply KL %</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>Ply KL %</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>String</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>KL Prod:Raw Diff</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>KL Prod:Raw Diff</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+              <object type="TGbDatasetColumn">
+                <name>TD Prod:Raw Diff</name>
+                <description>Dataset Column</description>
+                <ImageIndex>42</ImageIndex>
+                <caps>0</caps>
+                <ccolr>clWindow</ccolr>
+                <cpydset />
+                <cpyfld />
+                <chkoff>False</chkoff>
+                <chkon>True</chkon>
+                <dflt />
+                <label>TD Prod:Raw Diff</label>
+                <displaywidth>150</displaywidth>
+                <overridewidth>0</overridewidth>
+                <domain>String</domain>
+                <table>String</table>
+                <type>Float</type>
+                <editor>dflt</editor>
+                <dec>3</dec>
+                <incval>0.0</incval>
+                <incblank>0</incblank>
+                <incfmt />
+                <maxstr />
+                <minstr />
+                <modify>0</modify>
+                <reqd>0</reqd>
+                <token>0</token>
+                <usesqltoken>0</usesqltoken>
+                <show>1</show>
+                <showhide>1</showhide>
+                <sclmax />
+                <sclmin />
+                <sclinv>0</sclinv>
+                <symb />
+                <GraphicSetId>00000000-0000-0000-0000-000000000000</GraphicSetId>
+                <lgnd />
+                <adoc />
+                <fprop />
+                <ranchor>0</ranchor>
+                <labelheight>0</labelheight>
+                <labelleft>0</labelleft>
+                <labeltop>0</labeltop>
+                <labelwidth>0</labelwidth>
+                <nullboxheight>0</nullboxheight>
+                <nullboxleft>0</nullboxleft>
+                <nullboxtop>0</nullboxtop>
+                <nullboxwidth>0</nullboxwidth>
+                <height>0</height>
+                <left>0</left>
+                <top>0</top>
+                <width>0</width>
+                <showedalws>0</showedalws>
+                <gstype>0</gstype>
+                <txtontop>0</txtontop>
+                <clrtxtbg>0</clrtxtbg>
+              </object>
+            </object>
+          </object>
+          <object type="TGbEvents" />
+          <object type="TGbSubstitutionParameters" />
+        </object>
+      </object>
+      <object type="TGbEvents" />
+      <object type="TGbAccelerators">
+        <name>Keyboard Shortcuts</name>
+        <description>Keyboard Shortcuts</description>
+        <ImageIndex>0</ImageIndex>
+      </object>
+      <object type="TGbNotebooks">
+        <name>Notebooks</name>
+        <description>Notebooks</description>
+        <ImageIndex>16</ImageIndex>
+        <object type="TGbNotebook">
+          <name>TOTAL HOLES AND METERS DRILLED</name>
+          <description>TOTAL HOLES AND METERS DRILLED</description>
+          <ImageIndex>16</ImageIndex>
+          <hide>0</hide>
+          <size>0</size>
+          <object type="TGbNotebookPage">
+            <name>Meters Summary By:</name>
+            <description>Meters Summary By: </description>
+            <ImageIndex>17</ImageIndex>
+            <align>0</align>
+            <object type="TGbNotebookFrameGrid">
+              <name>TOTAL HOLES AND METERS DRILLED</name>
+              <description>TOTAL HOLES AND METERS DRILLED</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>METERS DRILLED</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+            <object type="TGbNotebookFrameGrid">
+              <name>METERS DRILLED BY DRILL COMPANY</name>
+              <description>METERS DRILLED BY DRILL COMPANY</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>METERS DRILLED BY DRILL COMPANY</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+            <object type="TGbNotebookFrameGrid">
+              <name>METERS DRILLED BY HOLE TYPE</name>
+              <description>METERS DRILLED BY HOLE TYPE</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>METERS DRILLED BY HOLE TYPE</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+            <object type="TGbNotebookFrameGrid">
+              <name>METERS DRILLED BY HOLE PURPOSE</name>
+              <description>METERS DRILLED BY HOLE PURPOSE</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>METERS DRILLED BY HOLE PURPOSE</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+            <object type="TGbNotebookFrameGrid">
+              <name>METERS DRILLED BY DRILL RIG</name>
+              <description>METERS DRILLED BY DRILL RIG</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>METERS DRILLED BY DRILL RIG</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+            <object type="TGbNotebookFrameGrid">
+              <name>METERS DRILLED BY LEASE NO</name>
+              <description>METERS DRILLED BY LEASE NO</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>METERS DRILLED BY LEASE NO</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+          </object>
+        </object>
+        <object type="TGbNotebook">
+          <name>CORED HOLE SUMMARY</name>
+          <description>SITE SUMMARY Notebook</description>
+          <ImageIndex>16</ImageIndex>
+          <hide>0</hide>
+          <size>0</size>
+          <object type="TGbNotebookPage">
+            <name>SITE SUMMARY</name>
+            <description>SITE SUMMARY</description>
+            <ImageIndex>17</ImageIndex>
+            <align>1</align>
+            <object type="TGbNotebookFrameGrid">
+              <name>SITE SUMMARY</name>
+              <description>SITE SUMMARY</description>
+              <ImageIndex>18</ImageIndex>
+              <candel>1</candel>
+              <canins>1</canins>
+              <canupd>1</canupd>
+              <refresh>0</refresh>
+              <edauto>1</edauto>
+              <commit>0</commit>
+              <confirm>1</confirm>
+              <dset>Hole Summary</dset>
+              <valexit>0</valexit>
+              <order>0</order>
+              <size>-1</size>
+              <fheight>-1</fheight>
+              <fwidth>-1</fwidth>
+              <view>fvwgrid</view>
+              <fnslist>0</fnslist>
+              <fndhval>0</fndhval>
+              <fvwgrid>1</fvwgrid>
+              <fvwform>0</fvwform>
+              <object type="TGbCustomValidationTool">
+                <name>Custom Validation Tool</name>
+                <description>Custom Validation Tool</description>
+                <ImageIndex>0</ImageIndex>
+                <sql />
+                <rslt>1</rslt>
+                <proc>0</proc>
+                <dynam>0</dynam>
+                <autorefresh>0</autorefresh>
+                <refreshtype>Active</refreshtype>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <uniqueid>b5e459c7-ca0c-4652-88e9-7e894d462333</uniqueid>
+      <exportid>31989670</exportid>
+    </object>
+  </object>
+</objects>
