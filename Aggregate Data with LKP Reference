@@ -1,0 +1,58 @@
+SELECT 
+    d.PROJECT, 
+    d.SITE_ID, 
+    (SELECT STRING_AGG(DESCRIPTION, ', ') 
+     FROM (
+         SELECT DISTINCT lk_driller.DESCRIPTION
+         FROM GB_LKP_CODE lk_driller
+         WHERE lk_driller.CODE IN (
+             SELECT DRILLER 
+             FROM GB_CS_DRILLING sub_d 
+             WHERE sub_d.PROJECT = d.PROJECT AND sub_d.SITE_ID = d.SITE_ID AND sub_d.DRILLER = lk_driller.CODE
+         ) AND lk_driller.CATEGORY = 'DRILLER'
+     ) AS distinct_drillers
+    ) AS DRILLER_DESCRIPTIONS,
+    (SELECT STRING_AGG(DESCRIPTION, ', ') 
+     FROM (
+         SELECT DISTINCT lk_driller_com.DESCRIPTION
+         FROM GB_LKP_CODE lk_driller_com
+         WHERE lk_driller_com.CODE IN (
+             SELECT DRILL_COMPANY 
+             FROM GB_CS_DRILLING sub_d 
+             WHERE sub_d.PROJECT = d.PROJECT AND sub_d.SITE_ID = d.SITE_ID AND sub_d.DRILL_COMPANY = lk_driller_com.CODE
+         ) AND lk_driller_com.CATEGORY = 'Drill_Company'
+     ) AS distinct_drill_comps
+    ) AS DRILL_COM_DESCRIPTIONS,
+    CASE         
+        WHEN EXISTS (
+            SELECT 1
+            FROM GB_CS_DRILLING sub_d
+            WHERE sub_d.PROJECT = d.PROJECT 
+            AND sub_d.SITE_ID = d.SITE_ID
+            AND sub_d.RIG_TYPE IS NOT NULL
+        )
+    THEN
+    (SELECT STRING_AGG(CONCAT(DESCRIPTION, ' ', TRIM(RIG_NO)), ', ')
+     FROM (
+         SELECT DISTINCT lk_rig.DESCRIPTION, d.RIG_NO
+         FROM GB_LKP_CODE lk_rig
+         INNER JOIN GB_CS_DRILLING d ON d.RIG_TYPE = lk_rig.CODE
+         WHERE lk_rig.CATEGORY = 'Rig_Type' AND d.PROJECT = '?Select Project?' AND d.SITE_ID = '?Select Site?'
+     ) AS distinct_rig
+    )
+    ELSE
+    (SELECT STRING_AGG(TRIM(RIG_NO), ', ')
+     FROM (
+         SELECT DISTINCT d.RIG_NO
+         FROM GB_CS_DRILLING d
+         WHERE d.PROJECT = '?Select Project?' AND d.SITE_ID = '?Select Site?'
+     ) AS distinct_rig
+    )
+    END AS RIG_DESCRIPTIONS
+FROM
+    GB_CS_DRILLING d
+WHERE 
+    d.PROJECT = '?Select Project?' AND d.SITE_ID = '?Select Site?'
+GROUP BY 
+    d.PROJECT, 
+    d.SITE_ID;
