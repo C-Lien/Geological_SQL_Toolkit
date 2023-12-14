@@ -1,0 +1,46 @@
+DROP TABLE IF EXISTS #TempDrillingComments;
+
+CREATE TABLE #TempDrillingComments (
+    PROJECT nvarchar(255),
+    SITE_ID nvarchar(255),
+    ROW_ID int IDENTITY(1,1),
+    COMMENTS_TEXT nvarchar(100)
+);
+
+DECLARE @MaxLen int = 51; -- The maximum row length
+DECLARE @Index int;
+DECLARE @Text nvarchar(max);
+DECLARE @Project nvarchar(255);
+DECLARE @SiteID nvarchar(255);
+
+DECLARE comment_cursor CURSOR FOR
+SELECT 
+    PROJECT,
+    SITE_ID,
+    DRILLING_COMMENTS
+FROM GB_SITE_INITIALISATION
+WHERE PROJECT = '?Select Project?'
+AND SITE_ID = '?Select Borehole Name?';
+
+OPEN comment_cursor;
+
+FETCH NEXT FROM comment_cursor INTO @Project, @SiteID, @Text;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @Index = 1;
+    
+    WHILE LEN(@Text) > 0
+    BEGIN
+        INSERT INTO #TempDrillingComments (PROJECT, SITE_ID, COMMENTS_TEXT)
+        VALUES (@Project, @SiteID, LEFT(@Text, @MaxLen));
+        
+        SET @Text = SUBSTRING(@Text, @MaxLen + 1, LEN(@Text));
+    END
+    
+    FETCH NEXT FROM comment_cursor INTO @Project, @SiteID, @Text;
+END
+
+CLOSE comment_cursor;
+DEALLOCATE comment_cursor;
+
+SELECT * FROM #TempDrillingComments;
