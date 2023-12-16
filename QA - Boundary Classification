@@ -1,9 +1,7 @@
--- Temporary table for concatenated ENTITY and INSTANCE values
 CREATE TABLE #BoundaryInstances (
     EntityInstance VARCHAR(255)
 );
 
--- Temporary table for stored values
 CREATE TABLE #TempSiteTable (
     PROJECT NVARCHAR(16),
     SITE_ID NVARCHAR(16),
@@ -17,25 +15,17 @@ CREATE TABLE #TempSiteTable (
     HEIGHT DECIMAL (7,2)
 );
 
--- Populate the temporary table
 INSERT INTO #BoundaryInstances (EntityInstance)
 SELECT DISTINCT (CAST(ENTITY AS VARCHAR(255)) + '_' + CAST(INSTANCE AS VARCHAR(10)))
 FROM [dbo].[GB_BOUNDARY];
 
--- Declare the cursor for iterating over the temporary table
 DECLARE entity_cursor CURSOR FOR
 SELECT EntityInstance FROM #BoundaryInstances;
 
--- Variable to hold the current EntityInstance combination
 DECLARE @EntityInstance VARCHAR(255);
-
--- Open the cursor
 OPEN entity_cursor;
-
--- Fetch the first value from the cursor
 FETCH NEXT FROM entity_cursor INTO @EntityInstance;
 
--- Loop through all EntityInstance combinations
 WHILE @@FETCH_STATUS = 0
 BEGIN
 
@@ -79,7 +69,7 @@ BEGIN
     CROSS JOIN boundary b
     LEFT JOIN [dbo].[GB_CS_SITE_DETAILS] sd ON sd.PROJECT = s.PROJECT AND sd.SITE_ID = s.SITE_ID
     WHERE 
-        b.Boundary_Geom.STContains(geometry::Point(s.EASTING, s.NORTHING, 20355)) = 1
+        b.Boundary_Geom.STContains(geometry::Point(s.EASTING, s.NORTHING, 20355)) = 1 --CRS EPSG Set to ADG84_55S
         AND s.PROJECT = '?Select project?'
         AND (
             s.DATE_INSERTED >= '?From Date?' 
@@ -88,17 +78,14 @@ BEGIN
         AND sd.[LEASE_NO] <> (LEFT(@EntityInstance, CHARINDEX('_', @EntityInstance) - 1))
     ORDER BY s.[SITE_ID];
 
-    -- Fetch the next value from the cursor
     FETCH NEXT FROM entity_cursor INTO @EntityInstance;
 END;
 
--- Close and deallocate the cursor
 CLOSE entity_cursor;
 DEALLOCATE entity_cursor;
 
 SELECT * FROM #TempSiteTable
 ORDER BY DATE_INSERTED;
 
--- Clean up temporary table
 DROP TABLE #BoundaryInstances;
 DROP TABLE #TempSiteTable;
