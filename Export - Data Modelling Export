@@ -1,7 +1,7 @@
--- Generate lookup table
 DROP TABLE IF EXISTS [dbo].[TEMP_VW_SURVEY];
 
--- Creating the structure for temporary table
+-- Build lookup table - This temporary table will feed into subsquent site lookups for a quicker lookup timeframe.
+-- This was done as a temporary table to enable the user to define required data. Time-cost between temp, CTE and window queries are negligible for single site lookup.
 CREATE TABLE [dbo].[TEMP_VW_SURVEY] (
     HOLE NVARCHAR(16) PRIMARY KEY,
     EASTING DECIMAL(9, 2), 
@@ -14,22 +14,18 @@ CREATE TABLE [dbo].[TEMP_VW_SURVEY] (
     FLAG NVARCHAR(50)
 );
 
--- Create a temporary table to store the SITE_ID values to be selected
 CREATE TABLE [dbo].[#TempSiteIDs] (
     SITE_ID VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AI
 );
 
--- Create table variable
 DECLARE @SitesTable TABLE (
     SITE_ID VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AI
 );
 
--- Perform string split operation and insert the results into table variable
 INSERT INTO @SitesTable
 SELECT value 
 FROM STRING_SPLIT('?Select Sites?', ',');
 
--- Get all site details only once and store them in another table variable
 DECLARE @SiteDetails TABLE (
     SITE_ID VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AI,
     EASTING FLOAT,
@@ -46,7 +42,6 @@ SELECT
 FROM [dbo].[GB_CS_SITE_SURVEY]
 WHERE SITE_ID IN (SELECT SITE_ID FROM @SitesTable);
 
--- Insert into #TempSiteIDs table by joining the actual survey data and the site details data  
 INSERT INTO [dbo].[#TempSiteIDs] (SITE_ID)
 SELECT s.SITE_ID
 FROM [dbo].[GB_CS_SITE_SURVEY] s
@@ -56,7 +51,6 @@ WHERE
     AND '?Select Project?' = s.PROJECT
     AND SQRT(POWER(s.EASTING - d.EASTING, 2) + POWER(s.NORTHING - d.NORTHING, 2)) <= ?Select Radius (m)?;
 
--- Use the #TempSiteIDs table in subsequent query to populate temporary table 
 INSERT INTO [dbo].[TEMP_VW_SURVEY]
 SELECT 
     s.SITE_ID AS HOLE, 
@@ -85,7 +79,6 @@ WHERE
         OR '?Select Sites?' = ''
     );
 
--- Table cleanup
 DROP TABLE [dbo].[#TempSiteIDs];
 
 --Export Survey Data
@@ -341,5 +334,4 @@ GROUP BY
     p.DATE_INSERTED
 ORDER BY SITE_ID, FROM_DEPTH;
 
--- Data cleanup
 DROP TABLE IF EXISTS [dbo].[TEMP_VW_SURVEY];
