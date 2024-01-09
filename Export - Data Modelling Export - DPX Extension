@@ -1,4 +1,3 @@
---------------------------------------------------------------------------------- Building Preferential Data Selection by Row
 WITH LogType_Preferred AS (
     SELECT 
         d.SITE_ID AS BoreID,
@@ -18,10 +17,10 @@ WITH LogType_Preferred AS (
         AND ((d.LOG_TYPE = 'VELOCITY_20_MSF' OR d.LOG_TYPE = 'SONIC_20') AND d.LOG_VAL IS NOT NULL AND d.LOG_VAL <> 0)
     GROUP BY
         d.SITE_ID,
-        FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)) * CAST(?GPX Grouping Interval?  AS FLOAT),
+        FLOOR(d.DEPTH / CAST(?GPX Grouping Interval?  AS FLOAT)),
         d.LOG_TYPE
 ),
---------------------------------------------------------------------------------- Selecting Preferential Data Selection by Row and Log Type
+---------------------------------------------------------------------------------
 Temp_SO2FUF AS (
     SELECT
         l.BoreID,
@@ -35,7 +34,7 @@ Temp_SO2FUF AS (
     WHERE
         l.RN = 1
 ),
---------------------------------------------------------------------------------- Extract datasets
+---------------------------------------------------------------------------------
 Temp_GPX AS (
     SELECT
         d.SITE_ID AS BoreID,
@@ -63,7 +62,7 @@ Temp_GPX AS (
         OR AVG(CASE WHEN d.LOG_TYPE = 'FE_RESISTIVITY_SHALLOW_OHM' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
         OR AVG(CASE WHEN d.LOG_TYPE = 'SHORT_NEUTRON_SNU' THEN d.LOG_VAL ELSE NULL END) IS NOT NULL
 )
---------------------------------------------------------------------------------- Calculate UCS and Export
+---------------------------------------------------------------------------------
 SELECT
 	g.BoreID,
 	g.ToGeop,
